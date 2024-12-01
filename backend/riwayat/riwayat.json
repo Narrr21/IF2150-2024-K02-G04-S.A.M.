@@ -1,0 +1,38 @@
+[
+    {
+        "value": [1, 2],
+        "actionCode": "CB",
+        "time": "2024-12-01T10:00:00.000000",
+        "success": true
+    },
+    {
+        "value": [1],
+        "actionCode": "DB",
+        "time": "2024-12-01T10:00:00.000000",
+        "success": true
+    },
+    {
+        "value": [1],
+        "actionCode": "UB",
+        "time": "2024-12-01T10:00:00.000000",
+        "success": true
+    },
+    {
+        "value": [1],
+        "actionCode": "CG",
+        "time": "2024-12-01T11:30:00.000000",
+        "success": false
+    },
+    {
+        "value": [1],
+        "actionCode": "DG",
+        "time": "2024-12-01T11:30:00.000000",
+        "success": false
+    },
+    {
+        "value": [1],
+        "actionCode": "UG",
+        "time": "2024-12-01T12:15:00.000000",
+        "success": true
+    }
+]
