@@ -9,4 +9,6 @@ pip install -r requirements.txt
 
 to exit venv : deactivate
 
-if adding depedencies: pip freeze > requirements.txt
+if adding depedencies: 
+- set PYTHONIOENCODING=ascii
+- pip freeze > requirements.txt
