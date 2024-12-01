@@ -1,14 +1,14 @@
 from typing import List,Optional
 
 class Gudang:
-    def __init__(self, nama_gudang: str, capacity: int,max_capacity: int):
+    def __init__(self, gudang_name: str, capacity: int,max_capacity: int):
         '''
-        Initialize a Gudang entity.
-        @param nama_gudang: Nama dari gudang.
-        @param capacity: Kapasitas gudang saat ini.
-        @param max_capacity: Kapasitas maksimum dari gudang.
+        Initialisa a Gudang entity.
+        @param gudang_name: Name of the Gudang(Storage).
+        @param capacity: Gudang(Storage) capacity currently.
+        @param max_capacity: Maximum capacity of Gudang(Storage).
         '''
-        self.nama_gudang = nama_gudang
+        self.gudang_name = gudang_name
         self.capacity = capacity
         self.max_capacity = max_capacity
         self.list_barang: List[Barang] = []
