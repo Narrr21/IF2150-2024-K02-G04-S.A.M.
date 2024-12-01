@@ -11,3 +11,4 @@ class Gudang:
         self.nama_gudang = nama_gudang
         self.capacity = capacity
         self.max_capacity = max_capacity
+        self.list_barang: List[Barang] = []
