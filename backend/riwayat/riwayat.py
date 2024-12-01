@@ -1,5 +1,6 @@
 class Riwayat:
     def __init__(self, value, actionCode, time, success):
+        self._id = 0
         self.value = value
         self.actionCode = actionCode
         self.time = time
