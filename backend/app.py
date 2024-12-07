@@ -240,6 +240,16 @@ def get_gudang_by_name(gudang_name: str) -> Gudang:
         return None
     return gudang_from_mongo(gudang)
 
+def search_barang_in_gudang(gudang_id: int, barang_name: str) -> List[Barang]:
+    gudang = get_gudang(gudang_id)
+    barang_list = []
+    for barang_id, _ in gudang.list_barang:
+        barang = get_barang(barang_id)
+        if barang.name == barang_name:
+            print(f"Barang with name {barang_name} found in Gudang with ID {gudang._id}")
+            barang_list.append(barang)
+    return barang_list
+
 def get_all_gudang() -> List[Gudang]:
     gudang = gudang_collection.find()
     return [gudang_from_mongo(g) for g in gudang]
