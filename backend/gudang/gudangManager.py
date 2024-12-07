@@ -1,19 +1,45 @@
 from typing import List, Tuple, Optional
 from barang.barangManager import Barang
+from gudang import Gudang
+from app import *
 
-class Gudang:
-    def __init__(self, gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[Barang, int]]):
-        '''
-        Initialisa a Gudang entity.
-        @param gudang_name: Name of the Gudang(Storage).
-        @param capacity: Gudang(Storage) capacity currently.
-        @param max_capacity: Maximum capacity of Gudang(Storage).
-        '''
-        self._id = 0
-        self.gudang_name = gudang_name
-        self.capacity = capacity
-        self.max_capacity = max_capacity
+class GudangManager:
+    def __init__(self):
+        pass
+
+    def changeName(id: int, nama: str):
+        target = get_gudang(id)
+        target.gudang_name = nama
+        update_gudang(target)
+
+    def changeMaxCapacity(id: int, cap: int):
+        target = get_gudang(id)
+        target.max_capacity = cap
+        update_gudang(target)
+    
+    def createGudang(gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[Barang, int]]):
+        gudang.gudang_name = gudang_name
+        gudang.capacity = capacity
+        gudang.max_capacity = max_capacity
         if list_barang is None:
-            self.list_barang: List[Tuple[Barang, int]] = []
+            gudang.list_barang: List[Tuple[Barang, int]] = []
         else:
-            self.list_barang = list_barang
+            gudang.list_barang = list_barang
+        create_gudang(gudang)
+    
+    def deleteGudang(id: int):
+        delete_gudang(id)
+    
+    def openGudang(id: int):
+        target = get_gudang(id)
+        list_barang = get_barang_by_gudang(target)
+        return list_barang
+
+
+    def __saveHistory(act: str, val: int, targetid: int):
+        
+
+
+
+
+        
