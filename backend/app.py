@@ -99,6 +99,14 @@ def get_barang_by_name(name: str) -> Barang:
         return None
     return barang_from_mongo(barang)
 
+def get_barang_by_gudang(gudang: Gudang) -> List[Barang]:
+    list_barang = []
+    for barang_id, _ in gudang.list_barang:
+        barang = get_barang(barang_id)
+        print(f"Barang with ID {barang._id} and name {barang.name} found in Gudang with ID {gudang._id}")
+        list_barang.append(barang)
+    return list_barang
+
 def get_all_barang() -> List[Barang]:
     barang = barang_collection.find()
     return [barang_from_mongo(b) for b in barang]
@@ -137,7 +145,7 @@ def update_barang_qty(barang: Barang, gudang: Gudang, qty: int) -> None:
                 barang_collection.update_one({"_id": barang._id}, {"$set": {
                     "gudang": barang.gudang
                 }})
-                
+
             else:
                 gudang.list_barang[i] = (barang._id, qty)
             break
@@ -243,7 +251,7 @@ def update_gudang(gudang: Gudang) -> int:
     
     gudang_collection.update_one({"_id": gudang._id}, {"$set": {
         "gudang_name": gudang.gudang_name,
-        "capacity": gudang.capacity,
+        "capacity": gudang_capacity,
         "max_capacity": gudang.max_capacity,
         "list_barang": gudang.list_barang
     }})
@@ -280,23 +288,23 @@ def create_riwayat(Riwayat) -> None:
     print(f"Riwayat with ID {Riwayat._id} created successfully")
 
 # TESTING
-gudang1 = Gudang("Gudang 1", 0, 1000, [])
-gudang2 = Gudang("Gudang 2", 0, 1000, [])
-create_gudang(gudang1)
-create_gudang(gudang2)
-barang1 = Barang("Barang 1", 10, "Barang pertama", [])
-barang2 = Barang("Barang 2", 20, "Barang kedua", [])
-tempgudang = get_gudang(1)
-create_barang(barang1, tempgudang, 10)
-tempgudang = get_gudang(2)
-create_barang(barang2, tempgudang, 20)
-tempbarang = get_barang(1)
-tempgudang = get_gudang(1)
-update_barang_qty(tempbarang, tempgudang, 0)
-tempbarang = get_barang(1)
-tempbarang.name = "Barang 1 Updated"
-update_barang(tempbarang)
-barang3 = Barang("Barang 3", 30, "Barang ketiga", [])
-create_barang(barang3, tempgudang, 30)
-riwayat = Riwayat(1, "CREATE", "2021-08-01", True)
-create_riwayat(riwayat)
+# gudang1 = Gudang("Gudang 1", 0, 1000, [])
+# gudang2 = Gudang("Gudang 2", 0, 1000, [])
+# create_gudang(gudang1)
+# create_gudang(gudang2)
+# barang1 = Barang("Barang 1", 10, "Barang pertama", [])
+# barang2 = Barang("Barang 2", 20, "Barang kedua", [])
+# tempgudang = get_gudang(1)
+# create_barang(barang1, tempgudang, 10)
+# tempgudang = get_gudang(2)
+# create_barang(barang2, tempgudang, 20)
+# tempbarang = get_barang(1)
+# tempgudang = get_gudang(1)
+# update_barang_qty(tempbarang, tempgudang, 0)
+# tempbarang = get_barang(1)
+# tempbarang.name = "Barang 1 Updated"
+# update_barang(tempbarang)
+# barang3 = Barang("Barang 3", 30, "Barang ketiga", [])
+# create_barang(barang3, tempgudang, 30)
+# riwayat = Riwayat(1, "CREATE", "2021-08-01", True)
+# create_riwayat(riwayat)
