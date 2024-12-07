@@ -1,5 +1,5 @@
 # app.py
-from db import *
+from db import barang_collection, gudang_collection, riwayat_collection
 from barang.barangManager import Barang
 from gudang.gudangManager import Gudang
 from riwayat.riwayat import Riwayat
@@ -214,7 +214,7 @@ def delete_gudang(_id: int) -> None:
 
 # CRUD for Riwayat
 # ga yakin riwayat ini bener
-def create_riwayat(Riwayat) -> None:
+def create_riwayat(Riwayat) -> int:
     document = {
         "_id": Riwayat._id,
         "value": Riwayat.value,
@@ -224,6 +224,7 @@ def create_riwayat(Riwayat) -> None:
     }
     result = riwayat_collection.insert_one(document)
     print(f"Riwayat with ID {Riwayat._id} created successfully")
+    return result.inserted_id
 
 # # TESTING
 # gudang = Gudang("Gudang A", 0, 1000, [])

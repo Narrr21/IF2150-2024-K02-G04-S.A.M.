@@ -1,29 +1,52 @@
-import json
-import os
 from datetime import datetime
+from typing import List
 from ..riwayat.riwayat import Riwayat
+from ..app import create_riwayat, riwayat_from_mongo, riwayat_collection
 
 class RiwayatManager:
     def __init__(self):
-        self.riwayat_list = []
-        self.load_data()
+        pass
 
-    def load_data(self):
-        if os.path.exists("riwayat.json"):
-            with open("riwayat.json", "r") as file:
-                data = json.load(file)
-                for riwayat in data:
-                    self.riwayat_list.append(Riwayat(riwayat["value"], riwayat["actionCode"], riwayat["time"], riwayat["success"]))
-                    
-    def save_data(self):
-        with open("riwayat.json", "w") as file:
-            data = []
-            for riwayat in self.riwayat_list:
-                data.append({"value": riwayat.get_value(), "actionCode": riwayat.get_actionCode(), "time": riwayat.get_time(), "success": riwayat.get_success()})
-            json.dump(data, file)
-
-    def add_riwayat(self, value: int, action_code: str, success: bool):
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        riwayat = Riwayat(value, action_code, time, success)
-        self.riwayat_list.append(riwayat)
-        self.save_data()
+    def create_riwayat_loc(value: str, actionCode: int, success: bool) -> int:
+        riwayat = Riwayat(
+            value=value,
+            actionCode=actionCode,
+            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            success=success
+        )
+        id = create_riwayat(riwayat)
+        return id
+    
+    @staticmethod
+    def get_riwayat(_id: int) -> Riwayat:
+        riwayat = riwayat_collection.find_one({"_id": _id})
+        if riwayat is None:
+            print("Riwayat not found")
+            return None
+        return riwayat_from_mongo(riwayat)
+    
+    @staticmethod
+    def get_all_riwayat() -> List[Riwayat]:
+        riwayat = riwayat_collection.find()
+        return [riwayat_from_mongo(r) for r in riwayat]
+    
+    @staticmethod
+    def translate_riwayat(_id: int) -> str:
+        riwayat = RiwayatManager.get_riwayat(_id)
+        if riwayat is None:
+            return "Riwayat not found"
+        if riwayat.actionCode == "CB":
+            return f"Barang with ID {riwayat.value[0]} created in gudang with ID {riwayat.value[1]}"
+        elif riwayat.actionCode == "DB":
+            return f"Barang with ID {riwayat.value[0]} deleted from gudang with ID {riwayat.value[1]}"
+        elif riwayat.actionCode == "UB":
+            return f"Barang with ID {riwayat.value[0]} updated"
+        elif riwayat.actionCode == "PB":
+            return f"Barang with ID {riwayat.value[0]} moved to Gudang with ID {riwayat.value[1]} from Gudang with ID {riwayat.value[2]} in quantity {riwayat.value[3]}"
+        elif riwayat.actionCode == "CG":
+            return f"Gudang with ID {riwayat.value[0]} created"
+        elif riwayat.actionCode == "DG":
+            return f"Gudang with ID {riwayat.value[0]} deleted"
+        elif riwayat.actionCode == "UG":
+            return f"Gudang with ID {riwayat.value[0]} updated"
+    
