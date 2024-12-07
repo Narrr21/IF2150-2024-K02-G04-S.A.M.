@@ -1,5 +1,6 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from barang.barangManager import Barang
+from riwayat.riwayatManager import create_riwayat_loc
 from gudang import Gudang
 from app import *
 
@@ -17,15 +18,15 @@ class GudangManager:
         target.max_capacity = cap
         update_gudang(target)
     
-    def createGudang(gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[Barang, int]]):
-        gudang.gudang_name = gudang_name
-        gudang.capacity = capacity
-        gudang.max_capacity = max_capacity
+    def createGudang(gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[int, int]]):
+        Gudang.gudang_name = gudang_name
+        Gudang.capacity = capacity
+        Gudang.max_capacity = max_capacity
         if list_barang is None:
-            gudang.list_barang: List[Tuple[Barang, int]] = []
+            Gudang.list_barang = []
         else:
-            gudang.list_barang = list_barang
-        create_gudang(gudang)
+            Gudang.list_barang = list_barang
+        create_gudang(Gudang)
     
     def deleteGudang(id: int):
         delete_gudang(id)
@@ -36,7 +37,18 @@ class GudangManager:
         return list_barang
 
 
-    def __saveHistory(act: str, val: int, targetid: int):
+    def __saveHistory(act: str, targetid: int, success: bool):
+        if not success:
+            create_riwayat_loc([targetid], act, False)
+            return
+        
+        if act == "CG":
+            create_riwayat_loc([targetid], act, True)
+        elif act == "DG":
+            create_riwayat_loc([targetid], act, True)
+        elif act == "UG":
+            create_riwayat_loc([targetid], act, True)
+
         
 
 

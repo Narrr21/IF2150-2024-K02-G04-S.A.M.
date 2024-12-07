@@ -7,7 +7,7 @@ class RiwayatManager:
     def __init__(self):
         pass
 
-    def create_riwayat_loc(value: str, actionCode: int, success: bool) -> int:
+    def create_riwayat_loc(value: List[int], actionCode: int, success: bool) -> int:
         riwayat = Riwayat(
             value=value,
             actionCode=actionCode,
@@ -49,4 +49,3 @@ class RiwayatManager:
             return f"Gudang with ID {riwayat.value[0]} deleted"
         elif riwayat.actionCode == "UG":
             return f"Gudang with ID {riwayat.value[0]} updated"
-    
