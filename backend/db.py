@@ -4,10 +4,19 @@ import os
 
 # Load environment variables
 load_dotenv()
-mongo_uri = os.getenv("MONGO_URI")
+mongo_uri = "mongodb://localhost:27017/"
 
 client = MongoClient(mongo_uri)
-db = client['myDatabase']
-collection = db['myCollection']
+db = client['storage_allocation_manager']
+gudang_collection = db['gudang']
+barang_collection = db['barang']
+riwayat_collection = db['riwayat']
 
-print("Connected to MongoDB!")
+# Perform a simple query to check the connection
+try:
+    # List the databases to confirm connection
+    databases = client.list_database_names()
+    print("Connected to MongoDB!")
+    print("Databases:", databases)
+except Exception as e:
+    print("Failed to connect to MongoDB:", e)

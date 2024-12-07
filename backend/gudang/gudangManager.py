@@ -1,14 +1,19 @@
-from typing import List,Optional
+from typing import List, Tuple, Optional
+from barang.barangManager import Barang
 
 class Gudang:
-    def __init__(self, gudang_name: str, capacity: int,max_capacity: int):
+    def __init__(self, gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[Barang, int]]):
         '''
         Initialisa a Gudang entity.
         @param gudang_name: Name of the Gudang(Storage).
         @param capacity: Gudang(Storage) capacity currently.
         @param max_capacity: Maximum capacity of Gudang(Storage).
         '''
+        self._id = 0
         self.gudang_name = gudang_name
         self.capacity = capacity
         self.max_capacity = max_capacity
-        self.list_barang: List[Barang] = []
+        if list_barang is None:
+            self.list_barang: List[Tuple[Barang, int]] = []
+        else:
+            self.list_barang = list_barang
