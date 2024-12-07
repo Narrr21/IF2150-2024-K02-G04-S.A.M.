@@ -30,7 +30,15 @@ class GudangManager:
     def deleteGudang(id: int):
         delete_gudang(id)
     
-    def 
+    def openGudang(id: int):
+        target = get_gudang(id)
+        list_barang = get_barang_by_gudang(target)
+        return list_barang
+
+
+    def __saveHistory(act: str, val: int, targetid: int):
+        
+
 
 
 
