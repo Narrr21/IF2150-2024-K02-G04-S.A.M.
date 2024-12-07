@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from barang.barangManager import Barang
-from riwayat.riwayatManager import create_riwayat_loc
+from ..controller.riwayatManager import RiwayatManager
 from gudang import Gudang
 from app import *
 
@@ -36,18 +36,20 @@ class GudangManager:
         list_barang = get_barang_by_gudang(target)
         return list_barang
 
+    def changeQuantity(gudang_id: int, barang_id: int, quantity: int):
+        update_barang_qty(barang_id, gudang_id, quantity)
 
     def __saveHistory(act: str, targetid: int, success: bool):
         if not success:
-            create_riwayat_loc([targetid], act, False)
+            RiwayatManager.create_riwayat_loc([targetid], act, False)
             return
         
         if act == "CG":
-            create_riwayat_loc([targetid], act, True)
+            RiwayatManager.create_riwayat_loc([targetid], act, True)
         elif act == "DG":
-            create_riwayat_loc([targetid], act, True)
+            RiwayatManager.create_riwayat_loc([targetid], act, True)
         elif act == "UG":
-            create_riwayat_loc([targetid], act, True)
+            RiwayatManager.create_riwayat_loc([targetid], act, True)
 
         
 

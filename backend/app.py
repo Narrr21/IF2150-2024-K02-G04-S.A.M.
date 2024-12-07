@@ -136,7 +136,9 @@ def update_barang(barang: Barang) -> None:
         print(f"Gudang with ID {gudang_id} updated successfully")
     print(f"Barang with ID {barang._id} and name {barang.name} updated successfully")
 
-def update_barang_qty(barang: Barang, gudang: Gudang, qty: int) -> None:
+def update_barang_qty(barang_id: int, gudang_id: int, qty: int) -> None:
+    barang = get_barang(barang_id)
+    gudang = get_gudang(gudang_id)
     for i in range(len(gudang.list_barang)):
         if gudang.list_barang[i][0] == barang._id:
             if qty <= 0:
