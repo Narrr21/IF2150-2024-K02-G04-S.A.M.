@@ -4,6 +4,7 @@ from barang.barangManager import Barang
 from gudang.gudangManager import Gudang
 from riwayat.riwayat import Riwayat
 from typing import List
+from status.status import Status
 
 # mongo to object
 def barang_from_mongo(json) -> Barang:
@@ -192,6 +193,59 @@ def remove_barang(barang: Barang, gudang: Gudang) -> None:
     }})
     print(f"Barang with ID {barang._id} removed from Gudang with ID {gudang._id}")
 
+# Add this function after the remove_barang function
+def pindah_barang(barang_id: int, source_gudang_id: int, dest_gudang_id: int, qty: int) -> bool:
+    """
+    Move barang from source Gudang to destination Gudang
+    """
+    barang = get_barang(barang_id)
+    source_gudang = get_gudang(source_gudang_id)
+    dest_gudang = get_gudang(dest_gudang_id)
+    
+    if not barang or not source_gudang or not dest_gudang:
+        return Status.error(message="Barang or Gudang not found")
+    
+    # Check if barang exists in source Gudang
+    source_qty = 0
+    for b_id, quantity in source_gudang.list_barang:
+        if b_id == barang_id:
+            source_qty = quantity
+            break
+    
+    if source_qty < qty:
+        return Status.error(message=f"Insufficient quantity in source Gudang. Available: {source_qty}, Requested: {qty}")
+    
+    # Check if destination Gudang has enough capacity
+    if dest_gudang.capacity + (barang.capacity * qty) > dest_gudang.max_capacity:
+        return Status.error(message="Destination Gudang doesn't have enough capacity")
+    
+    # Remove from source Gudang
+    update_barang_qty(barang_id, source_gudang_id, source_qty - qty)
+    
+    # Add to destination Gudang
+    # Check if barang already exists in destination Gudang
+    dest_qty = 0
+    for b_id, quantity in dest_gudang.list_barang:
+        if b_id == barang_id:
+            dest_qty = quantity
+            break
+    
+    if dest_qty > 0:
+        update_barang_qty(barang_id, dest_gudang_id, dest_qty + qty)
+    else:
+        # If barang doesn't exist in destination Gudang yet
+        dest_gudang.list_barang.append((barang_id, qty))
+        barang.gudang.append(dest_gudang_id)
+        
+        barang_collection.update_one({"_id": barang_id}, {"$set": {
+            "gudang": barang.gudang
+        }})
+        gudang_collection.update_one({"_id": dest_gudang_id}, {"$set": {
+            "list_barang": dest_gudang.list_barang,
+            "capacity": calculate_current_capacity(dest_gudang)
+        }})
+    
+    return Status.success(message=f"Successfully moved {qty} units of {barang.name} from Gudang {source_gudang.gudang_name} to Gudang {dest_gudang.gudang_name}")
 
 # CRUD for Gudang
 def calculate_current_capacity(gudang: Gudang) -> int:
