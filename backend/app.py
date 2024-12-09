@@ -194,7 +194,7 @@ def remove_barang(barang: Barang, gudang: Gudang) -> None:
     print(f"Barang with ID {barang._id} removed from Gudang with ID {gudang._id}")
 
 # Add this function after the remove_barang function
-def pindah_barang(barang_id: int, source_gudang_id: int, dest_gudang_id: int, qty: int) -> bool:
+def pindah_barang(barang_id: int, source_gudang_id: int, dest_gudang_id: int, qty: int) -> Status:
     """
     Move barang from source Gudang to destination Gudang
     """
