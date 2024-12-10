@@ -1,5 +1,5 @@
 import flet as ft
-from const import *
+from .const import *
 
 class TemplateButton(ft.ElevatedButton):
     def __init__(
