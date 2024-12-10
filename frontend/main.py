@@ -5,19 +5,13 @@ from template import (
     TemplateAppBar, TemplateNavigationRail
 )
 from const import DARK_TEXT
+from frontend.view.editGudang import showGudang
+
 def main(page: ft.Page):
     # Initialize page with template
     page.__class__ = TemplatePage
     page.title = "Design System Showcase"
-    
-    def show_dialog(e):
-        dialog = TemplateDialog(
-            title="Sample Dialog",
-            content="This is a sample dialog with custom styling."
-        )
-        page.dialog = dialog
-        dialog.open = True
-        page.update()
+
 
     # Create sample content
     content = ft.Column([
@@ -62,7 +56,7 @@ def main(page: ft.Page):
         ft.Text("Dialog", size=20, weight="bold"),
         TemplateButton(
             text="Show Dialog",
-            on_click=show_dialog
+            on_click=showGudang
         ),
     ], scroll=ft.ScrollMode.AUTO)
 
