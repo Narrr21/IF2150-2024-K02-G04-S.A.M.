@@ -10,6 +10,8 @@ from backend.controller.riwayatManager import (
 
 dataRiwayat = RiwayatManager.get_all_riwayat()
 
+print(dataRiwayat)
+
 
 def riwayatPage(page: ft.Page):
     # Initialize page with template
@@ -21,9 +23,9 @@ def riwayatPage(page: ft.Page):
         ft.Text("Riwayat", size=20, weight="bold"),
         ft.Column([
             TemplateListItem(
-                title=ft.Text(riwayat.actionCode, size=24),
-                selected_icon=ft.Icon(ft.icons.BOOKMARK, size=24),
-                label_content=ft.Text(riwayat["label"], size=14, weight="bold"),
+                title=RiwayatManager.translate_riwayat(riwayat._id),
+                leading=ft.Icon(ft.icons.HISTORY),
+                subtitle=riwayat.timestamp,
             ) for riwayat in dataRiwayat
         ]),
     ], scroll=ft.ScrollMode.AUTO)

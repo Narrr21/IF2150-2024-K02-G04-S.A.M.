@@ -293,7 +293,7 @@ def create_riwayat(Riwayat) -> None:
         "_id": Riwayat._id,
         "value": Riwayat.value,
         "actionCode": Riwayat.actionCode,
-        "timestamp": Riwayat.time,
+        "timestamp": Riwayat.timestamp,
         "success": Riwayat.success
     }
     result = riwayat_collection.insert_one(document)
@@ -319,5 +319,9 @@ def create_riwayat(Riwayat) -> None:
 # update_barang(tempbarang)
 # barang3 = Barang("Barang 3", 30, "Barang ketiga", [])
 # create_barang(barang3, tempgudang, 30)
-# riwayat = Riwayat(1, "CREATE", "2021-08-01", True)
+# riwayat = Riwayat([1, 2], "CB", "2021-08-01", True)
 # create_riwayat(riwayat)
+# riwayat2 = Riwayat([1, 3], "DB", "2021-08-01", True)
+# create_riwayat(riwayat2)
+# riwayat3 = Riwayat([2, 3], "UB", "2021-08-01", True)
+# create_riwayat(riwayat3)
