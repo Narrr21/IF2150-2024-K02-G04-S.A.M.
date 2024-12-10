@@ -148,6 +148,7 @@ def update_barang_qty(barang_id: int, gudang_id: int, qty: int) -> None:
                 barang_collection.update_one({"_id": barang._id}, {"$set": {
                     "gudang": barang.gudang
                 }})
+                print(gudang.list_barang)
 
             else:
                 gudang.list_barang[i] = (barang._id, qty)
@@ -155,10 +156,15 @@ def update_barang_qty(barang_id: int, gudang_id: int, qty: int) -> None:
     if calculate_current_capacity(gudang) > gudang.max_capacity:
         print("Gudang capacity exceeded")
         return
+    
+    print(gudang.list_barang)
+    
     gudang_collection.update_one({"_id": gudang._id}, {"$set": {
         "list_barang": gudang.list_barang,
         "capacity" : calculate_current_capacity(gudang)
     }})
+    print(gudang.list_barang)
+
     print(f"Barang with ID {barang._id} updated successfully")
 
     
@@ -316,25 +322,34 @@ def pindah_barang(barang_id: int, source_gudang_id: int, dest_gudang_id: int, qt
     # Add to destination Gudang
     # Check if barang already exists in destination Gudang
     dest_qty = 0
+    found = False
     for b_id, quantity in dest_gudang.list_barang:
         if b_id == barang_id:
             dest_qty = quantity
+            found = True
             break
-    
-    if dest_qty > 0:
+    if not found:
+        added = get_barang(barang_id)
+        add_barang(added, dest_gudang, qty)
+        print(f"NAMBAH {dest_gudang._id}")
+    else :
         update_barang_qty(barang_id, dest_gudang_id, dest_qty + qty)
-    else:
-        # If barang doesn't exist in destination Gudang yet
-        dest_gudang.list_barang.append((barang_id, qty))
-        barang.gudang.append(dest_gudang_id)
+    
+    # if dest_qty > 0:
+    #     update_barang_qty(barang_id, dest_gudang_id, dest_qty + qty)
+
+    # else:
+    #     # If barang doesn't exist in destination Gudang yet
+    #     dest_gudang.list_barang.append((barang_id, qty))
+    #     barang.gudang.append(dest_gudang_id)
         
-        barang_collection.update_one({"_id": barang_id}, {"$set": {
-            "gudang": barang.gudang
-        }})
-        gudang_collection.update_one({"_id": dest_gudang_id}, {"$set": {
-            "list_barang": dest_gudang.list_barang,
-            "capacity": calculate_current_capacity(dest_gudang)
-        }})
+    #     barang_collection.update_one({"_id": barang_id}, {"$set": {
+    #         "gudang": barang.gudang
+    #     }})
+    #     gudang_collection.update_one({"_id": dest_gudang_id}, {"$set": {
+    #         "list_barang": dest_gudang.list_barang,
+    #         "capacity": calculate_current_capacity(dest_gudang)
+    #     }})
 # CRUD for Riwayat
 # ga yakin riwayat ini bener
 def create_riwayat(Riwayat) -> None:
@@ -352,6 +367,9 @@ def create_riwayat(Riwayat) -> None:
     return result.inserted_id
 
 # TESTING
+# a = BarangManager()
+# s = Status()
+# s = a.pindahBarang()
 # gudang1 = Gudang("Gudang 1", 0, 1000, [])
 # gudang2 = Gudang("Gudang 2", 0, 1000, [])
 # create_gudang(gudang1)
@@ -364,11 +382,18 @@ def create_riwayat(Riwayat) -> None:
 # create_barang(barang2, tempgudang, 20)
 # tempbarang = get_barang(1)
 # tempgudang = get_gudang(1)
-# update_barang_qty(tempbarang, tempgudang, 0)
+# gudang1 = get_gudang(1)
+# print(gudang1.list_barang)
+# gudang1 = get_gudang(1)
+# print(gudang1.list_barang)
 # tempbarang = get_barang(1)
 # tempbarang.name = "Barang 1 Updated"
 # update_barang(tempbarang)
+# gudang1 = get_gudang(1)
+# print(gudang1.list_barang)
 # barang3 = Barang("Barang 3", 30, "Barang ketiga", [])
 # create_barang(barang3, tempgudang, 30)
+# gudang1 = get_gudang(1)
+# print(gudang1.list_barang)
 # riwayat = Riwayat(1, "CREATE", "2021-08-01", True)
 # create_riwayat(riwayat)
