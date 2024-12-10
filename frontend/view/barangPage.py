@@ -13,6 +13,19 @@ from backend.app import (
 tempgudang = get_gudang(1)
 
 list_barang = get_barang_by_gudang(tempgudang)
+list_int_barang = []
+for barang in tempgudang.list_barang:
+    list_int_barang.append(barang[1])
+
+list_barang_and_int = []
+for i in range(len(list_barang)):
+    list_barang_and_int.append([list_barang[i], list_int_barang[i]])
+
+print(list_barang_and_int)
+
+print(list_int_barang)
+
+
 
 print(list_barang)
 
@@ -34,12 +47,12 @@ def barangPage(page: ft.Page):
                         TemplateButton("Delete"),
 
                         TemplateListItem(
-                            title=barang.name,
-                            subtitle=barang.capacity,
+                            title=item[0].name,
+                            subtitle="qty: " + str(item[1]),
                             leading=ft.Icon(ft.icons.HISTORY),
                         )
                     ]
-                ) for barang in list_barang
+                ) for item in list_barang_and_int
             ]
         ),
     ],
