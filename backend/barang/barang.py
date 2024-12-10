@@ -1,5 +1,4 @@
 from typing import List
-from app import *
 class Barang:
     def __init__(self, name: str, capacity: int, description: str, gudang: List[int]):
         self._id = 0

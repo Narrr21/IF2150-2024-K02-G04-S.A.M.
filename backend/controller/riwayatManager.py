@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
-from ..riwayat.riwayat import Riwayat
-from ..app import create_riwayat, riwayat_from_mongo, riwayat_collection
+from backend.riwayat.riwayat import Riwayat
+from backend.app import create_riwayat, riwayat_from_mongo, riwayat_collection
 
 class RiwayatManager:
     def __init__(self):

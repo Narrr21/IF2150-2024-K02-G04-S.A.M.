@@ -1,5 +1,4 @@
-from typing import List, Tuple, Optional
-from barang.barangManager import Barang
+from typing import List, Tuple
 
 class Gudang:
     def __init__(self, gudang_name: str, capacity: int,max_capacity: int, list_barang: List[Tuple[int, int]]):

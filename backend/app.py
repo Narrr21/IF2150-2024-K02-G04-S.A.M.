@@ -1,8 +1,8 @@
 # app.py
-from db import barang_collection, gudang_collection, riwayat_collection
-from barang.barangManager import Barang
-from gudang.gudangManager import Gudang
-from riwayat.riwayat import Riwayat
+from backend.db import barang_collection, gudang_collection, riwayat_collection
+from backend.barang.barang import Barang
+from backend.gudang.gudang import Gudang
+from backend.riwayat.riwayat import Riwayat
 from typing import List
 
 # mongo to object

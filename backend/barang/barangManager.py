@@ -1,7 +1,6 @@
-from barang import Barang
-from ..controller.riwayatManager import RiwayatManager 
+from backend.controller.riwayatManager import RiwayatManager 
 from typing import List
-from app import *
+from backend.app import *
 
 class BarangManager:
     def __init__(self):
