@@ -129,12 +129,12 @@ def update_barang(barang: Barang) -> None:
                 "capacity": previous_capacity
             }})
             return
-        
+
         gudang_collection.update_one({"_id": gudang_id}, {"$set": {
             "capacity" : calculate_current_capacity(gudang),
             "list_barang": gudang.list_barang
         }})
-        print(f"Gudang with ID {gudang_id} updated successfully")
+        print(f"Gudang with ID {gudang_id} updated successfully with capacity {calculate_current_capacity(gudang)}")
     print(f"Barang with ID {barang._id} and name {barang.name} updated successfully")
 
 def update_barang_qty(barang_id: int, gudang_id: int, qty: int) -> None:
@@ -157,7 +157,7 @@ def update_barang_qty(barang_id: int, gudang_id: int, qty: int) -> None:
         print("Gudang capacity exceeded")
         return
     
-    print(gudang.list_barang)
+
     
     gudang_collection.update_one({"_id": gudang._id}, {"$set": {
         "list_barang": gudang.list_barang,
@@ -208,9 +208,10 @@ def calculate_current_capacity(gudang: Gudang) -> int:
     sum = 0
     for barang_id, qty in gudang.list_barang:
         barang = get_barang(barang_id)
+        print(barang)
         if(barang is None):
             continue
-        sum += barang.capacity * qty
+        sum += int(barang.capacity) * int(qty)
 
     return sum
     

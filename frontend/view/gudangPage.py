@@ -4,11 +4,101 @@ from frontend.template import (
     TemplateCard, TemplateListItem, TemplatePage,
     TemplateAppBar, TemplateNavigationRail
 )
-from const import DARK_TEXT
-from backend.app import get_all_gudang
+from frontend.const import DARK_TEXT
+from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang
+from frontend.view.barangPage import barangPage
 
+def deleteGudangOverlay(page: ft.Page, id: int):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
 
-def gudangPage(page: ft.Page):
+    def confirm_delete(e):
+        delete_gudang(id)
+        dlg.open = False
+        page.clean()
+        gudangPage(page)
+        page.update()
+
+    dlg = TemplateDialog(
+        title="Confirm Delete",
+        content=ft.Text("Are you sure you want to delete this gudang?"),
+        actions=[
+            TemplateButton(
+                text="Yes",
+                style="primary",
+                on_click=confirm_delete
+            ),
+            TemplateButton(
+                text="No",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def editGudangOverlay(page: ft.Page, id: int):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def save_changes(e):
+        # Implement save changes logic here
+        updated_name = dlg.fields[0].value
+        updated_max_capacity = (dlg.fields[1].value)
+        if updated_name:
+            gudang.name = updated_name
+        if updated_max_capacity:    
+            gudang.max_capacity = updated_max_capacity
+        dlg.open = False
+        update_gudang(gudang)
+        page.clean()
+        gudangPage(page)
+        page.update()
+
+    gudang = get_gudang(id)
+    dlg = TemplateDialog(
+        title="Edit Gudang",
+        content=[
+            TemplateTextField(
+                label="Name",
+                hint_text="Enter new name",
+                value=gudang.gudang_name
+            ),
+            TemplateTextField(
+                label="Capacity",
+                hint_text="Enter new capacity",
+                value=gudang.capacity
+            ),
+            TemplateTextField(
+                label="Max Capacity",
+                hint_text="Enter new max capacity",
+                value=gudang.max_capacity
+            ),
+        ],
+        actions=[
+            TemplateButton(
+                text="Save Changes",
+                style="primary",
+                on_click=save_changes
+            ),
+            TemplateButton(
+                text="Cancel",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def gudangPage(page: ft.Page) -> int:
     # Initialize page with template
     page.__class__ = TemplatePage
     page.title = "Storage Allocation Manager"
@@ -36,17 +126,24 @@ def gudangPage(page: ft.Page):
                         TemplateButton(
                             text="Enter",
                             style="primary",
-                            on_click=lambda e: print("View Details clicked")
+                            on_click=lambda e, gudang_id=Gudang._id: (
+                                page.clean(),
+                                barangPage(page, gudang_id)
+                            )
                         ),
                         TemplateButton(
                             text="Edit",
                             style="secondary",
-                            on_click=lambda e: print("Edit clicked")
+                            on_click=lambda e, gudang_id=Gudang._id: (
+                                editGudangOverlay(page, gudang_id)
+                            )
                         ),
                         TemplateButton(
                             text="X",
                             style="outline",
-                            on_click=lambda e: print("Delete clicked")
+                            on_click=lambda e, gudang_id=Gudang._id: (
+                                deleteGudangOverlay(page, gudang_id)
+                            )
                         )
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -75,7 +172,8 @@ def gudangPage(page: ft.Page):
         {
             "icon": ft.icons.HOME_OUTLINED,
             "selected_icon": ft.icons.HOME,
-            "label": "Home"
+            "label": "Home",
+            "on_click": lambda e: print("Home clicked")
         },
         {
             "icon": ft.icons.SETTINGS_OUTLINED,
@@ -105,5 +203,5 @@ def gudangPage(page: ft.Page):
         ], expand=True)
     )
 
-if __name__ == "__main__":
-    ft.app(gudangPage)
+# if __name__ == "__main__":
+#     ft.app(gudangPage)
