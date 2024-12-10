@@ -31,6 +31,8 @@ def barangPage(page: ft.Page):
                 ft.Row(
                     [
                         TemplateButton("Edit"),
+                        TemplateButton("Delete"),
+
                         TemplateListItem(
                             title=barang.name,
                             subtitle=barang.capacity,
