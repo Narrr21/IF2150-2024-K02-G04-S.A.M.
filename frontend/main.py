@@ -1,70 +1,74 @@
 import flet as ft
-from template import (
+from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialog,
     TemplateCard, TemplateListItem, TemplatePage,
     TemplateAppBar, TemplateNavigationRail
 )
 from const import DARK_TEXT
+from backend.app import get_all_gudang
+
+
 def main(page: ft.Page):
     # Initialize page with template
     page.__class__ = TemplatePage
-    page.title = "Design System Showcase"
-    
-    def show_dialog(e):
-        dialog = TemplateDialog(
-            title="Sample Dialog",
-            content="This is a sample dialog with custom styling."
-        )
-        page.dialog = dialog
-        dialog.open = True
-        page.update()
+    page.title = "Storage Allocation Manager"
 
-    # Create sample content
-    content = ft.Column([
-        ft.Text("Buttons", size=20, weight="bold"),
-        ft.Row([
-            TemplateButton("Primary Button", style="primary"),
-            TemplateButton("Secondary Button", style="secondary"),
-            TemplateButton("Outline Button", style="outline"),
-        ]),
-        
-        ft.Divider(),
-        ft.Text("Text Fields", size=20, weight="bold"),
-        TemplateTextField(
-            label="Sample Input",
-            hint_text="Enter some text"
-        ),
-        
-        ft.Divider(),
-        ft.Text("Cards", size=20, weight="bold"),
+    ListGudang = get_all_gudang()
+    gudang_cards = [
         TemplateCard(
-            title="Sample Card",
-            content=ft.Text("This is a sample card with custom styling.")
-        ),
-        
-        ft.Divider(),
-        ft.Text("List Items", size=20, weight="bold"),
-        ft.Column([
-            TemplateListItem(
-                title="List Item 1",
-                subtitle="With subtitle",
-                leading=ft.Icon(ft.icons.STAR),
-                trailing=ft.Icon(ft.icons.ARROW_FORWARD_IOS)
-            ),
-            TemplateListItem(
-                title="List Item 2",
-                subtitle="Another item",
-                leading=ft.Icon(ft.icons.FAVORITE),
-            ),
-        ]),
-        
-        ft.Divider(),
-        ft.Text("Dialog", size=20, weight="bold"),
-        TemplateButton(
-            text="Show Dialog",
-            on_click=show_dialog
-        ),
-    ], scroll=ft.ScrollMode.AUTO)
+            title=Gudang.gudang_name,
+            content=ft.Column( 
+            [
+                ft.Text(
+                        f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}", 
+                        text_align=ft.TextAlign.CENTER
+                    ),
+                    ft.Text(
+                        "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
+                        color="red" if Gudang.capacity == Gudang.max_capacity else "green",
+                        text_align=ft.TextAlign.CENTER
+                    ),
+                
+                ft.Divider(height=20, color="transparent"), 
+                    
+                ft.Row(
+                     [
+                        TemplateButton(
+                            text="Enter",
+                            style="primary",
+                            on_click=lambda e: print("View Details clicked")
+                        ),
+                        TemplateButton(
+                            text="Edit",
+                            style="secondary",
+                            on_click=lambda e: print("Edit clicked")
+                        ),
+                        TemplateButton(
+                            text="X",
+                            style="outline",
+                            on_click=lambda e: print("Delete clicked")
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    width=float('inf')
+                )
+            ],
+            spacing=5,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            width=float('inf')
+        )
+        )
+        for Gudang in ListGudang
+    ]
+
+    grid_view = ft.GridView(
+        expand=True,
+        max_extent=250,
+        spacing=10,
+        run_spacing=10,
+        padding=20,
+        controls=gudang_cards
+    )
 
     # Setup navigation rail
     nav_items = [
@@ -82,7 +86,7 @@ def main(page: ft.Page):
     
     # Create layout
     page.appbar = TemplateAppBar(
-        title="Design System",
+        title="Storage Allocation Manager",
         actions=[
             ft.IconButton(ft.icons.LIGHT_MODE),
             ft.IconButton(ft.icons.SETTINGS),
@@ -97,9 +101,9 @@ def main(page: ft.Page):
         ft.Row([
             page.navigation_rail,
             ft.VerticalDivider(width=1),
-            content,
+            grid_view
         ], expand=True)
     )
 
 if __name__ == "__main__":
-    ft.app(target=main) 
+    ft.app(target=main)
