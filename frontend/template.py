@@ -94,7 +94,7 @@ class TemplateCard(ft.Card):
         super().__init__(
             content=ft.Container(
                 content=ft.Column([
-                    ft.Text(title, size=16, weight="bold") if title else None,
+                    ft.Text(title, size=20, weight="bold", text_align=ft.TextAlign.CENTER, width=float('inf')) if title else None,
                     content if content else None,
                 ], tight=True),
                 padding=20,
