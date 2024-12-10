@@ -36,3 +36,7 @@ class BarangManager:
             RiwayatManager.create_riwayat_loc(value, act, True)
             
     # def moveBarang(id_barang:int, id_gudang:int):
+    def pindahBarang(self, id_barang: int, source_gudang: int, dest_gudang: int, qty: int):
+        result = pindah_barang(id_barang, source_gudang, dest_gudang, qty)
+        self.__saveHistory("PB", [id_barang, source_gudang, dest_gudang, qty], result.is_success)
+        return result
