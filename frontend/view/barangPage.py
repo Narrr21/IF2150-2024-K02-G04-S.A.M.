@@ -33,6 +33,7 @@ def barangPage(page: ft.Page):
                         TemplateButton("Edit"),
                         TemplateListItem(
                             title=barang.name,
+                            subtitle=barang.capacity,
                             leading=ft.Icon(ft.icons.HISTORY),
                         )
                     ]
