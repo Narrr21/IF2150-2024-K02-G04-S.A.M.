@@ -65,7 +65,10 @@ class LoginManager:
             json.dump(users, f, indent=4)
 
     def login(self, username: str, password: str) -> Tuple[bool, str]:
-        # authenticate user and create a new session
+        """
+        Authenticate user and create a new session
+        return: Tuple[isLoggedIn, message]
+        """
         try:
             if not username or not password:
                 return False, "Username and password cannot be empty"

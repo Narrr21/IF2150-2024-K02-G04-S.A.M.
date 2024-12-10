@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from ..controller.riwayatManager import RiwayatManager
-from gudang import Gudang
+from backend.controller.riwayatManager import RiwayatManager
+from backend.gudang import Gudang
 from backend.app import get_gudang, create_gudang, delete_gudang, update_gudang, get_barang_by_gudang, update_barang_qty
 
 class GudangManager:
