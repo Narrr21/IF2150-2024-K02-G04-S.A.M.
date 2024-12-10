@@ -2,39 +2,34 @@ import flet as ft
 from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialog
 )
+from backend.controller.gudangManager import GudangManager
 from backend.app import get_gudang
 
-page = ft.Page()
+def editGudang(id):
+    print("Edit Gudang")
 
-def editGudang(_id: int):
-    currentGudang = get_gudang(_id)
-    return ft.Column([
-        ft.Text("Nama Gudang", size=20, weight="bold"),
-        TemplateTextField(
-            label={currentGudang.gudang_name},
-            hint_text="Masukan nama gudang baru"
-        ),
-        ft.Text("Max Capacity Gudang", size=20, weight="bold"),
-        TemplateTextField(
-            label={currentGudang.max_capacity},
-            hint_text="Masukan max capacity baru"
-        ),
-        TemplateButton(
-            text="Save",
-            on_click=lambda _: editGudang(1)
-        )
-    ])
+class EditGudangPage(ft.UserControl):  
+    def __init__(self, id):
+        super().__init__()
+        self.id = id
+        self.gudang_manager = GudangManager()
 
-def getId() -> int:
-    return 1
-
-def showGudang():
-    _id = getId()
-    dialog = TemplateDialog(
-        title=f"Gudang {_id}",
-        content=editGudang(_id),
-    )
-    page.dialog = dialog
-    dialog.open = True
-    page.update()
+    def showEditGudang(self):
+        currentGudang = get_gudang(self.id)
+        return ft.Column([
+            ft.Text("Nama Gudang", size=20, weight="bold"),
+            TemplateTextField(
+                label={currentGudang.gudang_name},
+                hint_text="Masukan nama gudang baru"
+            ),
+            ft.Text("Max Capacity Gudang", size=20, weight="bold"),
+            TemplateTextField(
+                label={currentGudang.max_capacity},
+                hint_text="Masukan max capacity baru"
+            ),
+            TemplateButton(
+                text="Save",
+                on_click=lambda _: editGudang(1)
+            )
+        ])
     
