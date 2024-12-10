@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+from frontend.const import DARK_TEXT
 
 # Load environment variables
 load_dotenv()
