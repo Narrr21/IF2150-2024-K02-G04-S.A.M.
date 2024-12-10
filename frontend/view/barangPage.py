@@ -128,7 +128,64 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
     dlg.open = True
     page.update()
 
+def createBarangOverlay(page: ft.Page, id: int):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
 
+    def save_changes(e):
+        # Implement save changes logic here
+        name = dlg.fields[0].value
+        qty = dlg.fields[1].value
+        size = dlg.fields[2].value
+        if name and qty and size:
+            qty = int(qty)
+            size = int(size)
+            barang = Barang(name, size, "SKIBIDI")
+            gudang = get_gudang(id)
+            create_barang(barang, gudang, qty)
+        dlg.open = False
+        page.clean()
+        barangPage(page, id)
+        page.update()
+
+    dlg = TemplateDialogTextField(
+        title="Create Barang",
+        fields=[
+            TemplateTextField(
+                label="Barang Name",
+                hint_text="Enter the name of the barang",
+                width=300,
+                autofocus=True
+            ),
+            TemplateTextField(
+                label="Quantity",
+                hint_text="Enter the quantity of the barang",
+                width=300
+            ),
+            TemplateTextField(
+                label="Size",
+                hint_text="Enter the size of the barang",
+                width=300
+            ),
+        ],
+        actions=[
+            TemplateButton(
+                text="Save Changes",
+                style="primary",
+                on_click=save_changes
+            ),
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
 
 def barangPage(page: ft.Page, id: int):
     # page.clean()

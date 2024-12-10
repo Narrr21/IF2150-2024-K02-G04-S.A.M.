@@ -98,6 +98,57 @@ def editGudangOverlay(page: ft.Page, id: int):
     dlg.open = True
     page.update()
 
+def createGudangOverlay(page: ft.Page):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def create_gudang(e):
+        # Implement create gudang logic here
+        gudang_name = dlg.fields[0].value
+        capacity = dlg.fields[1].value
+        max_capacity = dlg.fields[2].value
+        if gudang_name and capacity and max_capacity:
+            create_gudang(gudang_name, capacity, max_capacity, [])
+        dlg.open = False
+        page.clean()
+        gudangPage(page)
+        page.update()
+
+    dlg = TemplateDialog(
+        title="Create Gudang",
+        content=[
+            TemplateTextField(
+                label="Name",
+                hint_text="Enter name"
+            ),
+            TemplateTextField(
+                label="Capacity",
+                hint_text="Enter capacity"
+            ),
+            TemplateTextField(
+                label="Max Capacity",
+                hint_text="Enter max capacity"
+            ),
+        ],
+        actions=[
+            TemplateButton(
+                text="Create Gudang",
+                style="primary",
+                on_click=create_gudang
+            ),
+            TemplateButton(
+                text="Cancel",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
 def gudangPage(page: ft.Page) -> int:
     # Initialize page with template
     page.__class__ = TemplatePage
