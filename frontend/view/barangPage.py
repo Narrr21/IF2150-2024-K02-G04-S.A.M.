@@ -240,7 +240,13 @@ def barangPage(page: ft.Page, id: int):
 
     content = ft.Column(
     [
-        ft.Row([search_bar, TemplateButton("Enter")], expand=True),
+        ft.Row(
+            [
+                ft.Container(search_bar, expand=True), 
+                TemplateButton("Enter")
+            ],             
+            expand=True
+        ),
         ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
         ft.Column(
             [
@@ -254,10 +260,11 @@ def barangPage(page: ft.Page, id: int):
                             subtitle=f"qty: {str(item[1])} \nsize: {str(item[0].capacity)}",
                             leading=ft.Icon(ft.icons.HISTORY),
                         )
-                    ]
+                    ],
+                    expand=True
                 ) for item in list_barang_and_int
-            ]
-        ),
+            ], 
+        )
     ],
     scroll=ft.ScrollMode.AUTO,
     expand=True
@@ -296,7 +303,7 @@ def barangPage(page: ft.Page, id: int):
             "icon": ft.icons.ADD_OUTLINED,
             "selected_icon": ft.icons.ADD,
             "label": "Add Barang",
-        },
+        }, 
     ]
     
     # Create layout
@@ -320,7 +327,11 @@ def barangPage(page: ft.Page, id: int):
             ft.VerticalDivider(width=1),
             content,
 
-        ], expand=True)
+            ], 
+        
+            expand=True,
+            vertical_alignment=ft.CrossAxisAlignment.START 
+            )
     )
 
 # if __name__ == "__main__":
