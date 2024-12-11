@@ -5,11 +5,25 @@ from frontend.template import (
     TemplateAppBar, TemplateNavigationRail
 )
 from frontend.view.loginPage import LoginPage
+from frontend.view.barangPage import barangPage
+from frontend.view.gudangPage import *
+
+
 
 def main(page: ft.Page):
     # Initialize page with template
     page.__class__ = TemplatePage
     page.title = "Storage Allocation Manager"
+
+    def show_gudang_page():
+        page.clean()
+        gudangPage(page)
+        page.update()
+
+    def show_barang_page(id: int):
+        page.clean()
+        barangPage(page, id)
+        page.update()
     
     def handle_login(username, password, isLoggedIn, message):
         # TODO: Implement actual login logic
@@ -20,6 +34,7 @@ def main(page: ft.Page):
             show_main_content()
             page.update()
         else:
+            show_gudang_page() # DEBUGGING
             show_error(message)
             
     def show_error(message: str):
@@ -126,7 +141,9 @@ def main(page: ft.Page):
 
     # Start with login page
     login_page = LoginPage(on_login=handle_login)
+    # barang_page = BarangPage(1)
     page.add(login_page)
+    # page.add(barang_page)
 
 if __name__ == "__main__":
     ft.app(target=main) 

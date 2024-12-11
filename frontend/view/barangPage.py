@@ -2,22 +2,205 @@ import flet as ft
 from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialog,
     TemplateCard, TemplateListItem, TemplatePage,
-    TemplateAppBar, TemplateNavigationRail
+    TemplateAppBar, TemplateNavigationRail, TemplateDialogTextField
 )
-from backend.app import (
-    get_barang_by_gudang,
-    get_gudang
-)
+from backend.app import *
+
+def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def confirm_delete(e):
+        delete_barang(id)
+        dlg.open = False
+        page.clean()
+        barangPage(page, gudang_id)
+        page.update()
+
+    dlg = TemplateDialog(
+        title="Confirm Delete",
+        content=ft.Text("Are you sure you want to delete this barang?"),
+        actions=[
+            TemplateButton(
+                text="Yes",
+                style="primary",
+                on_click=confirm_delete
+            ),
+            TemplateButton(
+                text="No",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
+    barang = get_barang(id)
+    num = 0
+    listbar = get_barang_by_gudang(get_gudang(gudang_id))
+    for i in range(len(listbar)):
+        if listbar[i]._id == barang._id:
+            num = listbar[i]._id
+            break
+
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def save_changes(e):
+        # Implement save changes logic here
+        updated_name = dlg.fields[0].value
+        updated_qty = (dlg.fields[1].value)
+        updated_size = (dlg.fields[2].value)
+        if updated_name:
+            barang.name = updated_name
+        if updated_qty:
+            # list_barang = get_barang_by_gudang(get_gudang(gudang_id))
+            # for i in range(len(list_barang)):
+            #     if list_barang[i]._id == barang._id:
+            #         list_barang[i] = (barang._id, int(updated_qty))
+            #         break
+            # gudang = get_gudang(gudang_id)
+            # gudang.list_barang = list_barang
+            # update_gudang(gudang)
+            print(f"Updated qty: {updated_qty}")
+            # try:
+            updated_qty = int(updated_qty)
+            # except ValueError:
+            #     print("Invalid quantity value")
+            update_barang_qty(barang._id, gudang_id, updated_qty)
+        if updated_size:
+            barang.capacity = int(updated_size)
+
+        num = 0
+        update_barang(barang)
+        dlg.open = False
+        page.clean()
+        barangPage(page, gudang_id)
+
+    
+    dlg = TemplateDialogTextField(
+        title="Edit Barang",
+        fields=[
+            TemplateTextField(
+                label="Barang Name",
+                hint_text="Enter the name of the barang (if changed)",
+                width=300,
+                autofocus=True,
+                value=barang.name
+            ),
+            TemplateTextField(
+                label="Quantity",
+                hint_text="Enter the quantity of the barang (if changed)",
+                width=300,
+                value=str(num)
+            ),
+            TemplateTextField(
+                label="Size",
+                hint_text="Enter the new size of the barang (if changed)",
+                width=300,
+                value=str(barang.capacity)
+            ),
+        ],
+        actions=[
+            TemplateButton(
+                text="Save Changes",
+                style="primary",
+                on_click=save_changes
+            ),
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+    
 
 
-tempgudang = get_gudang(1)
 
-list_barang = get_barang_by_gudang(tempgudang)
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
 
-print(list_barang)
+def createBarangOverlay(page: ft.Page, id: int):
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
 
+    def save_changes(e):
+        # Implement save changes logic here
+        name = dlg.fields[0].value
+        qty = dlg.fields[1].value
+        size = dlg.fields[2].value
+        if name and qty and size:
+            qty = int(qty)
+            size = int(size)
+            barang = Barang(name, size, "SKIBIDI")
+            gudang = get_gudang(id)
+            create_barang(barang, gudang, qty)
+        dlg.open = False
+        page.clean()
+        barangPage(page, id)
+        page.update()
 
-def barangPage(page: ft.Page):
+    dlg = TemplateDialogTextField(
+        title="Create Barang",
+        fields=[
+            TemplateTextField(
+                label="Barang Name",
+                hint_text="Enter the name of the barang",
+                width=300,
+                autofocus=True
+            ),
+            TemplateTextField(
+                label="Quantity",
+                hint_text="Enter the quantity of the barang",
+                width=300
+            ),
+            TemplateTextField(
+                label="Size",
+                hint_text="Enter the size of the barang",
+                width=300
+            ),
+        ],
+        actions=[
+            TemplateButton(
+                text="Save Changes",
+                style="primary",
+                on_click=save_changes
+            ),
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def barangPage(page: ft.Page, id: int):
+    # page.clean()
+    tempgudang = get_gudang(id)
+
+    list_barang = get_barang_by_gudang(tempgudang)
+    list_int_barang = []
+    for barang in tempgudang.list_barang:
+        list_int_barang.append(barang[1])
+
+    list_barang_and_int = []
+    for i in range(len(list_barang)):
+        list_barang_and_int.append([list_barang[i], list_int_barang[i]])
+
+    list_barang_and_int = sorted(list_barang_and_int, key=lambda x: x[1], reverse=False)
     # Initialize page with template
     page.__class__ = TemplatePage
     page.title = "Page Barang"
@@ -30,16 +213,16 @@ def barangPage(page: ft.Page):
             [
                 ft.Row(
                     [
-                        TemplateButton("Edit"),
-                        TemplateButton("Delete"),
+                        TemplateButton("Edit", on_click=lambda e: updateBarangOverlay(page, id, tempgudang._id)),
+                        TemplateButton("Delete", on_click=lambda e: deleteBarangOverlay(page, id, tempgudang._id)),
 
                         TemplateListItem(
-                            title=barang.name,
-                            subtitle=barang.capacity,
+                            title=item[0].name,
+                            subtitle=f"qty: {str(item[1])} \nsize: {str(item[0].capacity)}",
                             leading=ft.Icon(ft.icons.HISTORY),
                         )
                     ]
-                ) for barang in list_barang
+                ) for item in list_barang_and_int
             ]
         ),
     ],
@@ -85,5 +268,72 @@ def barangPage(page: ft.Page):
         ], expand=True)
     )
 
-if __name__ == "__main__":
-    ft.app(barangPage)
+# if __name__ == "__main__":
+#     ft.app(barangPage)
+
+# class BarangPage(ft.UserControl):
+#     def __init__(self, id: int):
+#         super().__init__()
+#         self.id = id  # Store the ID of the gudang
+#         self.tempgudang = get_gudang(id)  # Get gudang data
+#         self.list_barang = get_barang_by_gudang(self.tempgudang)  # Fetch barang data
+#         self.list_int_barang = [barang[1] for barang in self.tempgudang.list_barang]
+#         # Combine barang names and quantities
+#         self.list_barang_and_int = [
+#             [self.list_barang[i], self.list_int_barang[i]]
+#             for i in range(len(self.list_barang))
+#         ]
+
+#     def build(self):
+#         # Main content
+#         content = ft.Column(
+#             [
+#                 ft.Text(self.tempgudang.gudang_name, size=20, weight="bold"),
+#                 ft.Column(
+#                     [
+#                         ft.Row(
+#                             [
+#                                 TemplateButton("Edit"),
+#                                 TemplateButton("Delete"),
+#                                 TemplateListItem(
+#                                     title=item[0].name,
+#                                     subtitle="qty: " + str(item[1]),
+#                                     leading=ft.Icon(ft.icons.HISTORY),
+#                                 ),
+#                             ]
+#                         )
+#                         for item in self.list_barang_and_int
+#                     ]
+#                 ),
+#             ],
+#             scroll=ft.ScrollMode.AUTO,
+#         )
+
+#         # Navigation rail items
+#         nav_items = [
+#             {
+#                 "icon": ft.icons.HOME_OUTLINED,
+#                 "selected_icon": ft.icons.HOME,
+#                 "label": "Home",
+#             },
+#             {
+#                 "icon": ft.icons.SETTINGS_OUTLINED,
+#                 "selected_icon": ft.icons.SETTINGS,
+#                 "label": "Settings",
+#             },
+#             {
+#                 "icon": ft.icons.HISTORY_OUTLINED,
+#                 "selected_icon": ft.icons.HISTORY,
+#                 "label": "History",
+#             },
+#         ]
+
+#         # Layout structure
+#         return ft.Row(
+#             [
+#                 TemplateNavigationRail(destinations=nav_items),
+#                 ft.VerticalDivider(width=1),
+#                 content,
+#             ],
+#             expand=True,
+#         )
