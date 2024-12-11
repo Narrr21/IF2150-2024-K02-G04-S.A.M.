@@ -258,7 +258,7 @@ def barangPage(page: ft.Page, id: int):
                         TemplateListItem(
                             title=item[0].name,
                             subtitle=f"qty: {str(item[1])} \nsize: {str(item[0].capacity)}",
-                            leading=ft.Icon(ft.icons.HISTORY),
+                            # leading=ft.Icon(ft.icons.HISTORY),
                         )
                     ],
                     expand=True

@@ -48,17 +48,8 @@ def main(page: ft.Page):
 
     def show_main_content():
         # Your existing main content setup
-        def show_dialog(e):
-            dialog = TemplateDialog(
-                title="Sample Dialog",
-                content="This is a sample dialog with custom styling."
-            )
-            page.dialog = dialog
-            dialog.open = True
-            page.update()
-
-        # Create sample content
-        content = ft.Column([
+        content_area = ft.Container(
+            content=ft.Column([
             ft.Text("Buttons", size=20, weight="bold"),
             ft.Row([
                 TemplateButton("Primary Button", style="primary"),
@@ -102,21 +93,58 @@ def main(page: ft.Page):
                 text="Show Dialog",
                 on_click=show_dialog
             ),
-        ], scroll=ft.ScrollMode.AUTO)
-
+        ], scroll=ft.ScrollMode.AUTO),
+            expand=True
+        )
+        
+        def route_change(route):
+            # selected_index = page.navigation_rail.selected_index
+            selected_index = route.control.selected_index
+            content_area.clean()
+            
+            if selected_index == 0:
+                content_area.content = gudangPage()
+            elif selected_index == 1:
+                content_area.content = gudangPage()
+            elif selected_index == 2:
+                content_area.content = gudangPage()
+            elif selected_index == 3:
+                content_area.content = gudangPage()
+                
+            page.update()
+            
+        def show_dialog(e):
+            dialog = TemplateDialog(
+                title="Sample Dialog",
+                content="This is a sample dialog with custom styling."
+            )
+            page.dialog = dialog
+            dialog.open = True
+            page.update()
+            
         # Setup navigation rail
         nav_items = [
-            {
-                "icon": ft.icons.HOME_OUTLINED,
-                "selected_icon": ft.icons.HOME,
-                "label": "Home"
-            },
-            {
-                "icon": ft.icons.SETTINGS_OUTLINED,
-                "selected_icon": ft.icons.SETTINGS,
-                "label": "Settings"
-            },
-        ]
+        {
+            "icon": ft.icons.HOME_OUTLINED,
+            "selected_icon": ft.icons.HOME,
+            "label": "Home",
+        },
+        {
+            "icon": ft.icons.SETTINGS_OUTLINED,
+            "selected_icon": ft.icons.SETTINGS,
+            "label": "Settings",
+        },
+        {
+            "icon": ft.icons.HISTORY_OUTLINED,
+            "selected_icon": ft.icons.HISTORY,
+            "label": "History",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Create Gudang",
+        },
+    ]
         
         # Create layout
         page.appbar = TemplateAppBar(
@@ -128,14 +156,15 @@ def main(page: ft.Page):
         )
         
         page.navigation_rail = TemplateNavigationRail(
-            destinations=nav_items
+            destinations=nav_items,
+            on_change=route_change
         )
         
         page.add(
             ft.Row([
                 page.navigation_rail,
                 ft.VerticalDivider(width=1),
-                content,
+                content_area,
             ], expand=True)
         )
 
