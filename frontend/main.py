@@ -141,7 +141,7 @@ def main(page: ft.Page):
 
     # Start with login page
     login_page = LoginPage(on_login=handle_login)
-    # barang_page = BarangPage(1)
+    # barang_page = barangPage(page, 1)
     page.add(login_page)
     # page.add(barang_page)
 

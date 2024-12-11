@@ -120,10 +120,39 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
             ),
         ]
     )
-    
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
 
+def addBarangOverlay(page: ft.Page, gudang_id: int):
+    listbar = get_barang_by_gudang(get_gudang(gudang_id))
 
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
 
+    def add_barang(e, barang):
+        # adding 1 barang
+        update_barang_qty(barang_id=barang._id, gudang_id=gudang_id, qty=1)
+        print(f"Added barang: {barang.name} to gudang {gudang_id}")
+
+    dlg = TemplateDialogTextField(
+        title="Add Barang",
+        fields=[
+            TemplateButton(
+                text=Barang.name,
+                style="primary",
+                on_click=lambda e, barang=Barang: add_barang(e, barang)
+            ) for Barang in listbar
+        ],
+        actions=[
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
@@ -148,7 +177,7 @@ def createBarangOverlay(page: ft.Page, id: int):
         page.clean()
         barangPage(page, id)
         page.update()
-
+        
     dlg = TemplateDialogTextField(
         title="Create Barang",
         fields=[
@@ -171,7 +200,7 @@ def createBarangOverlay(page: ft.Page, id: int):
         ],
         actions=[
             TemplateButton(
-                text="Save Changes",
+                text="Create Barang",
                 style="primary",
                 on_click=save_changes
             ),
@@ -228,22 +257,40 @@ def barangPage(page: ft.Page, id: int):
     ],
     scroll=ft.ScrollMode.AUTO
 )
+    
+    on_click_handler = [
+        lambda e: print("Home clicked"),
+        lambda e: print("Settings clicked"),
+        lambda e: print("History clicked"),
+        lambda e, gudang_id=id: createBarangOverlay(page, gudang_id),
+        lambda e, gudang_id=id: addBarangOverlay(page, gudang_id)
+    ]
     # Setup navigation rail
     nav_items = [
         {
             "icon": ft.icons.HOME_OUTLINED,
             "selected_icon": ft.icons.HOME,
-            "label": "Home"
+            "label": "Home",
         },
         {
             "icon": ft.icons.SETTINGS_OUTLINED,
             "selected_icon": ft.icons.SETTINGS,
-            "label": "Settings"
+            "label": "Settings",
         },
         {
             "icon": ft.icons.HISTORY_OUTLINED,
             "selected_icon": ft.icons.HISTORY,
-            "label": "History"
+            "label": "History",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Create Barang",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Add Barang",
         },
     ]
     
@@ -257,7 +304,8 @@ def barangPage(page: ft.Page, id: int):
     )
     
     page.navigation_rail = TemplateNavigationRail(
-        destinations=nav_items
+        destinations=nav_items,
+        on_click_handlers=on_click_handler
     )
     
     page.add(

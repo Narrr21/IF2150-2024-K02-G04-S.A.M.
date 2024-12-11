@@ -1,6 +1,6 @@
 import flet as ft
 from frontend.template import (
-    TemplateButton, TemplateTextField, TemplateDialog,
+    TemplateButton, TemplateTextField, TemplateDialogTextField, TemplateDialog,
     TemplateCard, TemplateListItem, TemplatePage,
     TemplateAppBar, TemplateNavigationRail
 )
@@ -49,7 +49,7 @@ def editGudangOverlay(page: ft.Page, id: int):
     def save_changes(e):
         # Implement save changes logic here
         updated_name = dlg.fields[0].value
-        updated_max_capacity = (dlg.fields[1].value)
+        updated_max_capacity = dlg.fields[1].value
         if updated_name:
             gudang.name = updated_name
         if updated_max_capacity:    
@@ -61,23 +61,19 @@ def editGudangOverlay(page: ft.Page, id: int):
         page.update()
 
     gudang = get_gudang(id)
-    dlg = TemplateDialog(
+    dlg = TemplateDialogTextField(
         title="Edit Gudang",
-        content=[
+        fields=[
             TemplateTextField(
-                label="Name",
-                hint_text="Enter new name",
-                value=gudang.gudang_name
-            ),
-            TemplateTextField(
-                label="Capacity",
-                hint_text="Enter new capacity",
-                value=gudang.capacity
+                label="Gudang Name",
+                hint_text="Masukkan nama gudang",
+                width=300,
+                autofocus=True
             ),
             TemplateTextField(
                 label="Max Capacity",
-                hint_text="Enter new max capacity",
-                value=gudang.max_capacity
+                hint_text="Masukkan max capacity",
+                width=300
             ),
         ],
         actions=[
@@ -114,21 +110,21 @@ def createGudangOverlay(page: ft.Page):
         page.clean()
         gudangPage(page)
         page.update()
+        
 
-    dlg = TemplateDialog(
+    dlg = TemplateDialogTextField(
         title="Create Gudang",
-        content=[
+        fields=[
             TemplateTextField(
-                label="Name",
-                hint_text="Enter name"
-            ),
-            TemplateTextField(
-                label="Capacity",
-                hint_text="Enter capacity"
+                label="Gudang Name",
+                hint_text="Masukkan nama gudang",
+                width=300,
+                autofocus=True
             ),
             TemplateTextField(
                 label="Max Capacity",
-                hint_text="Enter max capacity"
+                hint_text="Masukkan max capacity",
+                width=300
             ),
         ],
         actions=[
@@ -158,25 +154,21 @@ def gudangPage(page: ft.Page) -> int:
     gudang_cards = [
         TemplateCard(
             title=Gudang.gudang_name,
-            content=ft.Column( 
-            [
+            content=ft.Column([
                 ft.Text(
-                        f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}", 
-                        text_align=ft.TextAlign.CENTER
-                    ),
-                    ft.Text(
-                        "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
-                        color="red" if Gudang.capacity == Gudang.max_capacity else "green",
-                        text_align=ft.TextAlign.CENTER
-                    ),
-                
-                ft.Divider(height=20, color="transparent"), 
-                    
-                ft.Row(
-                     [
+                    f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}",
+                    text_align=ft.TextAlign.CENTER
+                ),
+                ft.Text(
+                    "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
+                    color="red" if Gudang.capacity == Gudang.max_capacity else "green",
+                    text_align=ft.TextAlign.CENTER
+                ),
+                ft.Divider(height=20, color="transparent"),
+                ft.Row([
                         TemplateButton(
                             text="Enter",
-                            style="primary",
+                            style="outline",
                             on_click=lambda e, gudang_id=Gudang._id: (
                                 page.clean(),
                                 barangPage(page, gudang_id)
@@ -184,7 +176,7 @@ def gudangPage(page: ft.Page) -> int:
                         ),
                         TemplateButton(
                             text="Edit",
-                            style="secondary",
+                            style="primary",
                             on_click=lambda e, gudang_id=Gudang._id: (
                                 editGudangOverlay(page, gudang_id)
                             )
@@ -195,19 +187,14 @@ def gudangPage(page: ft.Page) -> int:
                             on_click=lambda e, gudang_id=Gudang._id: (
                                 deleteGudangOverlay(page, gudang_id)
                             )
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    width=float('inf')
-                )
-            ],
-            spacing=5,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            width=float('inf')
+                        ),
+                ],
+                spacing=10,
+                alignment=ft.MainAxisAlignment.CENTER,
+                width=float('inf'))
+            ],),
         )
-        )
-        for Gudang in ListGudang
-    ]
+        for Gudang in ListGudang]
 
     grid_view = ft.GridView(
         expand=True,
@@ -218,18 +205,33 @@ def gudangPage(page: ft.Page) -> int:
         controls=gudang_cards
     )
 
-    # Setup navigation rail
+    
+    on_click_handler = [
+        lambda e: print("Home clicked"),
+        lambda e: print("Settings clicked"),
+        lambda e: print("History clicked"),
+        lambda e: createGudangOverlay(page)
+    ]
     nav_items = [
         {
             "icon": ft.icons.HOME_OUTLINED,
             "selected_icon": ft.icons.HOME,
             "label": "Home",
-            "on_click": lambda e: print("Home clicked")
         },
         {
             "icon": ft.icons.SETTINGS_OUTLINED,
             "selected_icon": ft.icons.SETTINGS,
-            "label": "Settings"
+            "label": "Settings",
+        },
+        {
+            "icon": ft.icons.HISTORY_OUTLINED,
+            "selected_icon": ft.icons.HISTORY,
+            "label": "History",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Create Gudang",
         },
     ]
     
@@ -243,7 +245,8 @@ def gudangPage(page: ft.Page) -> int:
     )
     
     page.navigation_rail = TemplateNavigationRail(
-        destinations=nav_items
+        destinations=nav_items,
+        on_click_handlers=on_click_handler
     )
     
     page.add(
@@ -253,6 +256,14 @@ def gudangPage(page: ft.Page) -> int:
             grid_view
         ], expand=True)
     )
+
+    # TemplateButton(
+    #     text="Create",
+    #     style="primary",
+    #     on_click=lambda e, : (
+    #         createGudangOverlay(page)
+    #     )
+    # ),    
 
 # if __name__ == "__main__":
 #     ft.app(gudangPage)
