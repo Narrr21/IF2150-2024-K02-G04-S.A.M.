@@ -1,5 +1,6 @@
 import flet as ft
 from frontend.const import *
+from typing import List
 
 class TemplateButton(ft.ElevatedButton):
     def __init__(
@@ -84,6 +85,31 @@ class TemplateDialog(ft.AlertDialog):
             **kwargs
         )
 
+class TemplateDialogTextField(ft.AlertDialog):
+    def __init__(
+        self,
+        title: str,
+        fields: List[TemplateTextField],
+        actions=None,
+        **kwargs
+    ):
+        if actions is None:
+            actions = [
+                TemplateButton("OK", style="primary"),
+                TemplateButton("Cancel", style="outline")
+            ]
+        
+        self.fields = [field for field in fields if field is not None]
+            
+        super().__init__(
+            title=ft.Text(title, size=16, weight="bold"),
+            content=ft.Column(fields),
+            actions=actions,
+            actions_alignment=ft.MainAxisAlignment.END,
+            **kwargs
+        )
+
+
 class TemplateCard(ft.Card):
     def __init__(
         self,
@@ -94,7 +120,7 @@ class TemplateCard(ft.Card):
         super().__init__(
             content=ft.Container(
                 content=ft.Column([
-                    ft.Text(title, size=16, weight="bold") if title else None,
+                    ft.Text(title, size=20, weight="bold", text_align=ft.TextAlign.CENTER, width=float('inf')) if title else None,
                     content if content else None,
                 ], tight=True),
                 padding=20,
@@ -153,10 +179,12 @@ class TemplateNavigationRail(ft.NavigationRail):
     def __init__(
         self,
         destinations: list,
+        on_click_handlers: list,
         selected_index=0,
-        on_change=None,
         **kwargs
     ):
+        self.on_click_handlers = on_click_handlers
+
         destinations_ = [
             ft.NavigationRailDestination(
                 icon=ft.Icon(destination["icon"], size=24, color=DARK_TEXT),
@@ -164,11 +192,19 @@ class TemplateNavigationRail(ft.NavigationRail):
                 label_content=ft.Text(destination["label"], size=14, weight="bold", color=DARK_TEXT),
             ) for destination in destinations
         ]
+
         super().__init__(
             destinations=destinations_,
             selected_index=selected_index,
-            on_change=on_change,
+            on_change=self.handle_change,
             bgcolor=CAMBRIDGE_BLUE,
             extended=True,
             **kwargs
         )
+
+    def handle_change(self, e):
+        selected_index = e.control.selected_index
+        if selected_index < len(self.on_click_handlers):
+            handler = self.on_click_handlers[selected_index]
+            if handler:
+                handler(e)
