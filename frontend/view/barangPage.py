@@ -235,8 +235,18 @@ def barangPage(page: ft.Page, id: int):
     page.title = "Page Barang"
 
     # Create sample content
+
+    search_bar = TemplateTextField("Search")
+
     content = ft.Column(
     [
+        ft.Row(
+            [
+                ft.Container(search_bar, expand=True), 
+                TemplateButton("Enter")
+            ],             
+            expand=True
+        ),
         ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
         ft.Column(
             [
@@ -250,12 +260,14 @@ def barangPage(page: ft.Page, id: int):
                             subtitle=f"qty: {str(item[1])} \nsize: {str(item[0].capacity)}",
                             leading=ft.Icon(ft.icons.HISTORY),
                         )
-                    ]
+                    ],
+                    expand=True
                 ) for item in list_barang_and_int
-            ]
-        ),
+            ], 
+        )
     ],
-    scroll=ft.ScrollMode.AUTO
+    scroll=ft.ScrollMode.AUTO,
+    expand=True
 )
     
     on_click_handler = [
@@ -291,7 +303,7 @@ def barangPage(page: ft.Page, id: int):
             "icon": ft.icons.ADD_OUTLINED,
             "selected_icon": ft.icons.ADD,
             "label": "Add Barang",
-        },
+        }, 
     ]
     
     # Create layout
@@ -308,12 +320,18 @@ def barangPage(page: ft.Page, id: int):
         on_click_handlers=on_click_handler
     )
     
+
     page.add(
         ft.Row([
             page.navigation_rail,
             ft.VerticalDivider(width=1),
             content,
-        ], expand=True)
+
+            ], 
+        
+            expand=True,
+            vertical_alignment=ft.CrossAxisAlignment.START 
+            )
     )
 
 # if __name__ == "__main__":
