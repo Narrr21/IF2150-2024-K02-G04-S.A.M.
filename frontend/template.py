@@ -68,6 +68,7 @@ class TemplateTextField(ft.TextField):
         self,
         label: str,
         hint_text: str = None,
+        on_change=None,
         **kwargs
     ):
         super().__init__(
@@ -76,6 +77,7 @@ class TemplateTextField(ft.TextField):
             border_color=CAMBRIDGE_BLUE,
             focused_border_color=TURQUOISE,
             cursor_color=TURQUOISE,
+            on_change=on_change,
             **kwargs
         )
 
