@@ -36,8 +36,12 @@ def barangPage(page: ft.Page):
     page.title = "Page Barang"
 
     # Create sample content
+
+    search_bar = TemplateTextField("Search")
+
     content = ft.Column(
     [
+        ft.Row([search_bar, TemplateButton("Enter")], expand=True),
         ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
         ft.Column(
             [
@@ -56,7 +60,8 @@ def barangPage(page: ft.Page):
             ]
         ),
     ],
-    scroll=ft.ScrollMode.AUTO
+    scroll=ft.ScrollMode.AUTO,
+    expand=True
 )
     # Setup navigation rail
     nav_items = [
@@ -90,11 +95,13 @@ def barangPage(page: ft.Page):
         destinations=nav_items
     )
     
+
     page.add(
         ft.Row([
             page.navigation_rail,
             ft.VerticalDivider(width=1),
             content,
+
         ], expand=True)
     )
 
