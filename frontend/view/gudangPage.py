@@ -22,7 +22,7 @@ def deleteGudangOverlay(page: ft.Page, id: int):
 
     dlg = TemplateDialog(
         title="Confirm Delete",
-        content=ft.Text("Are you sure you want to delete this gudang?"),
+        content="Are you sure you want to delete this gudang?",
         actions=[
             TemplateButton(
                 text="Yes",
@@ -46,10 +46,63 @@ def editGudangOverlay(page: ft.Page, id: int):
         dlg.open = False
         page.update()
 
+    def validate_input_name(e):
+        gudang_name_field = dlg.fields[0]
+        gudang_name_field.error_text = None
+        gudang_name_field.border_color = None
+
+        if len(gudang_name_field.value) > 30:
+            gudang_name_field.error_text = "Maximum 30 Characters"
+            gudang_name_field.border_color = "red"
+            gudang_name_field.update()
+            return
+        else:
+            gudang_name_field.error_text = None
+            gudang_name_field.border_color = None
+            gudang_name_field.update()
+            return
+
+
+    def validate_input_capacity(e):
+        updated_max_capacity = dlg.fields[1]
+        updated_max_capacity.error_text = None
+        updated_max_capacity.border_color = None
+
+        if updated_max_capacity.value == "":
+            updated_max_capacity.error_text = None
+            updated_max_capacity.border_color = None
+            updated_max_capacity.update()
+            return
+        try:
+            max_capacity = int(updated_max_capacity.value)
+        except ValueError:
+            updated_max_capacity.error_text = "Input must be a number"
+            updated_max_capacity.border_color = "red"
+            updated_max_capacity.update()
+        else:
+            if max_capacity <= 0:
+                updated_max_capacity.error_text = "Input must be greater than 0"
+                updated_max_capacity.border_color = "red"
+        updated_max_capacity.update()
+
     def save_changes(e):
-        # Implement save changes logic here
         updated_name = dlg.fields[0].value
-        updated_max_capacity = dlg.fields[1].value
+        updated_max_capacity_field = dlg.fields[1]
+
+        try:
+            updated_max_capacity = int(updated_max_capacity_field.value)
+        except ValueError:
+            max_capacity_field.error_text = "Input must be a number"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+            return
+        
+        if max_capacity <= 0:
+            max_capacity_field.error_text = "Input must be greater than 0"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+            return
+        
         if updated_name:
             gudang.name = updated_name
         if updated_max_capacity:    
@@ -66,14 +119,16 @@ def editGudangOverlay(page: ft.Page, id: int):
         fields=[
             TemplateTextField(
                 label="Gudang Name",
-                hint_text="Masukkan nama gudang",
+                hint_text="Enter Gudang Name",
                 width=300,
-                autofocus=True
+                autofocus=True,
+                on_change=validate_input_name
             ),
             TemplateTextField(
                 label="Max Capacity",
-                hint_text="Masukkan max capacity",
-                width=300
+                hint_text="Enter Max Capacity",
+                width=300,
+                on_change=validate_input_capacity
             ),
         ],
         actions=[
@@ -99,13 +154,75 @@ def createGudangOverlay(page: ft.Page):
         dlg.open = False
         page.update()
 
+    def validate_input_name(e):
+        gudang_name_field = dlg.fields[0]
+        gudang_name_field.error_text = None
+        gudang_name_field.border_color = None
+
+        if len(gudang_name_field.value) > 30:
+            gudang_name_field.error_text = "Maximum 30 Characters"
+            gudang_name_field.border_color = "red"
+            gudang_name_field.update()
+            return
+        else:
+            gudang_name_field.error_text = None
+            gudang_name_field.border_color = None
+            gudang_name_field.update()
+            return
+
+
+    def validate_input_capacity(e):
+        max_capacity_field = dlg.fields[1]
+        max_capacity_field.error_text = None
+        max_capacity_field.border_color = None
+
+        if max_capacity_field.value == "":
+            max_capacity_field.error_text = None
+            max_capacity_field.border_color = None
+            max_capacity_field.update()
+            return
+        try:
+            max_capacity = int(max_capacity_field.value)
+        except ValueError:
+            max_capacity_field.error_text = "Must be a number"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+        else:
+            if max_capacity <= 0:
+                max_capacity_field.error_text = "Must be greater than 0"
+                max_capacity_field.border_color = "red"
+        max_capacity_field.update()
+
     def create_gudang(e):
-        # Implement create gudang logic here
         gudang_name = dlg.fields[0].value
-        capacity = dlg.fields[1].value
-        max_capacity = dlg.fields[2].value
-        if gudang_name and capacity and max_capacity:
-            create_gudang(gudang_name, capacity, max_capacity, [])
+        max_capacity_field = dlg.fields[1]
+        if gudang_name == "":
+            dlg.fields[0].error_text = "Name cannot be empty"
+            dlg.fields[0].border_color = "red"
+            dlg.fields[0].update()
+            return  
+        
+        if not max_capacity_field.value:
+            max_capacity_field.error_text = "Capacity cannot be empty"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+            return
+
+        try:
+            max_capacity = int(max_capacity_field.value)
+        except ValueError:
+            max_capacity_field.error_text = "Must be a number"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+            return
+        
+        if max_capacity <= 0:
+            max_capacity_field.error_text = "Must be greater than 0"
+            max_capacity_field.border_color = "red"
+            max_capacity_field.update()
+            return
+        
+        create_gudang(gudang_name, 0, max_capacity, [])
         dlg.open = False
         page.clean()
         gudangPage(page)
@@ -117,14 +234,17 @@ def createGudangOverlay(page: ft.Page):
         fields=[
             TemplateTextField(
                 label="Gudang Name",
-                hint_text="Masukkan nama gudang",
+                hint_text="Enter Gudang Name",
                 width=300,
-                autofocus=True
+                autofocus=True,
+                on_change=validate_input_name
             ),
             TemplateTextField(
                 label="Max Capacity",
-                hint_text="Masukkan max capacity",
-                width=300
+                hint_text="Enter Max Capacity",
+                width=300,
+                autofocus=True,
+                on_change=validate_input_capacity
             ),
         ],
         actions=[
@@ -146,7 +266,6 @@ def createGudangOverlay(page: ft.Page):
     page.update()
 
 def gudangPage(page: ft.Page) -> int:
-    # Initialize page with template
     page.__class__ = TemplatePage
     page.title = "Storage Allocation Manager"
 
