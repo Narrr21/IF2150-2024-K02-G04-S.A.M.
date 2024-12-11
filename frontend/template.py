@@ -195,12 +195,10 @@ class TemplateNavigationRail(ft.NavigationRail):
     def __init__(
         self,
         destinations: list,
-        on_click_handlers: list,
+        on_change=None,
         selected_index=0,
         **kwargs
     ):
-        self.on_click_handlers = on_click_handlers
-
         destinations_ = [
             ft.NavigationRailDestination(
                 icon=ft.Icon(destination["icon"], size=24, color=DARK_TEXT),
@@ -212,15 +210,8 @@ class TemplateNavigationRail(ft.NavigationRail):
         super().__init__(
             destinations=destinations_,
             selected_index=selected_index,
-            on_change=self.handle_change,
+            on_change=on_change,
             bgcolor=CAMBRIDGE_BLUE,
             extended=True,
             **kwargs
         )
-
-    def handle_change(self, e):
-        selected_index = e.control.selected_index
-        if selected_index < len(self.on_click_handlers):
-            handler = self.on_click_handlers[selected_index]
-            if handler:
-                handler(e)
