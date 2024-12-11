@@ -2,9 +2,9 @@ import flet as ft
 from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialogTextField, TemplateDialog,
     TemplateCard, TemplateListItem, TemplatePage,
-    TemplateAppBar, TemplateNavigationRail
+    TemplateAppBar, TemplateNavigationRail, TemplateIconButton
 )
-from frontend.const import DARK_TEXT
+from frontend.const import DARK_TEXT, TURQUOISE
 from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang
 from frontend.view.barangPage import barangPage
 
@@ -152,53 +152,65 @@ def gudangPage(page: ft.Page) -> int:
 
     ListGudang = get_all_gudang()
     gudang_cards = [
-        TemplateCard(
-            title=Gudang.gudang_name,
-            content=ft.Column([
-                ft.Text(
-                    f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}",
-                    text_align=ft.TextAlign.CENTER
+    TemplateCard(
+        title=Gudang.gudang_name,
+        content=ft.Column([
+            ft.Divider(),
+            ft.Container(
+                content=ft.Text(
+                f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}",
+                text_align=ft.TextAlign.CENTER
                 ),
-                ft.Text(
-                    "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
-                    color="red" if Gudang.capacity == Gudang.max_capacity else "green",
-                    text_align=ft.TextAlign.CENTER
+                alignment=ft.alignment.center,
+                expand=True
+            ),
+            ft.Container(
+                content=ft.Text(
+                "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
+                color="red" if Gudang.capacity == Gudang.max_capacity else "green",
+                text_align=ft.TextAlign.CENTER
                 ),
-                ft.Divider(height=20, color="transparent"),
-                ft.Row([
-                        TemplateButton(
-                            text="Enter",
-                            style="outline",
-                            on_click=lambda e, gudang_id=Gudang._id: (
-                                page.clean(),
-                                barangPage(page, gudang_id)
-                            )
-                        ),
-                        TemplateButton(
-                            text="Edit",
-                            style="primary",
-                            on_click=lambda e, gudang_id=Gudang._id: (
-                                editGudangOverlay(page, gudang_id)
-                            )
-                        ),
-                        TemplateButton(
-                            text="X",
-                            style="outline",
-                            on_click=lambda e, gudang_id=Gudang._id: (
-                                deleteGudangOverlay(page, gudang_id)
-                            )
-                        ),
-                ],
-                spacing=10,
-                alignment=ft.MainAxisAlignment.CENTER,
-                width=float('inf'))
-            ],),
-        )
-        for Gudang in ListGudang]
+                alignment=ft.alignment.center,
+                expand=True
+            ),
+            ft.Divider(height=8, color="transparent"),
+            ft.Row([
+                TemplateIconButton(
+                    icon=ft.icons.EDIT_OUTLINED,
+                    icon_color=TURQUOISE,
+                    on_click=lambda e, gudang_id=Gudang._id: (
+                        editGudangOverlay(page, gudang_id)
+                    )
+                ),
+                TemplateIconButton(
+                    icon=ft.icons.DELETE_OUTLINE,
+                    icon_color=ft.colors.RED,
+                    on_click=lambda e, gudang_id=Gudang._id: (
+                        deleteGudangOverlay(page, gudang_id)
+                    )
+                )
+            ], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
+            ft.Divider(height=15, color="transparent"),
+            ft.Row(
+                [TemplateButton(
+                    text="Enter",
+                    style="outline",
+                    width=200,
+                    on_click=lambda e, gudang_id=Gudang._id: (
+                        page.clean(),
+                        barangPage(page, gudang_id)
+                    )
+                )],
+                alignment=ft.MainAxisAlignment.CENTER
+            )
+        ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+    )
+    for Gudang in ListGudang
+]
 
     grid_view = ft.GridView(
         expand=True,
-        max_extent=250,
+        max_extent=300,
         spacing=10,
         run_spacing=10,
         padding=20,
