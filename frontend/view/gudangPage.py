@@ -248,15 +248,23 @@ def createGudangOverlay(page: ft.Page):
 
     page.show_dialog(dlg)
 
-class GudangPage(ft.UserControl):
+class gudangPage(ft.UserControl):
     # Initialize page with template
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, content_area: ft.Container):
         super().__init__()
         self.page = page
+        self.content_area = content_area
+    
+    def switchToBarangPage(self, gudang_id):
+        barang_page = barangPage(self.page, gudang_id).build()
+        self.content_area.clean()
+        self.content_area.content = barang_page
+        self.content_area.update()
 
     def build(self):
         page = self.page
         ListGudang = get_all_gudang()
+
         gudang_cards = [
         TemplateCard(
             title=Gudang.gudang_name,
@@ -302,10 +310,7 @@ class GudangPage(ft.UserControl):
                         text="Enter",
                         style="outline",
                         width=200,
-                        on_click=lambda e, gudang_id=Gudang._id: (
-                            page.clean(),
-                            barangPage(page, gudang_id)
-                        )
+                        on_click=lambda e, gudang_id=Gudang._id: self.switchToBarangPage(gudang_id)
                     )],
                     alignment=ft.MainAxisAlignment.CENTER
                 )
@@ -325,137 +330,3 @@ class GudangPage(ft.UserControl):
         
         return grid_view
     
-# def gudangPage(page: ft.Page) -> int:
-#     # Initialize page with template
-#     page.__class__ = TemplatePage
-#     page.title = "Storage Allocation Manager"
-
-#     ListGudang = get_all_gudang()
-#     gudang_cards = [
-#     TemplateCard(
-#         title=Gudang.gudang_name,
-#         content=ft.Column([
-#             ft.Divider(),
-#             ft.Container(
-#                 content=ft.Text(
-#                 f"CAPACITY: {Gudang.capacity}/{Gudang.max_capacity}",
-#                 text_align=ft.TextAlign.CENTER
-#                 ),
-#                 alignment=ft.alignment.center,
-#                 expand=True
-#             ),
-#             ft.Container(
-#                 content=ft.Text(
-#                 "FULL!" if Gudang.capacity == Gudang.max_capacity else "Available",
-#                 color="red" if Gudang.capacity == Gudang.max_capacity else "green",
-#                 text_align=ft.TextAlign.CENTER
-#                 ),
-#                 alignment=ft.alignment.center,
-#                 expand=True
-#             ),
-#             ft.Divider(height=8, color="transparent"),
-#             ft.Row([
-#                 TemplateIconButton(
-#                     icon=ft.icons.EDIT_OUTLINED,
-#                     icon_color=TURQUOISE,
-#                     on_click=lambda e, gudang_id=Gudang._id: (
-#                         editGudangOverlay(page, gudang_id)
-#                     )
-#                 ),
-#                 TemplateIconButton(
-#                     icon=ft.icons.DELETE_OUTLINE,
-#                     icon_color=ft.colors.RED,
-#                     on_click=lambda e, gudang_id=Gudang._id: (
-#                         deleteGudangOverlay(page, gudang_id)
-#                     )
-#                 )
-#             ], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
-#             ft.Divider(height=15, color="transparent"),
-#             ft.Row(
-#                 [TemplateButton(
-#                     text="Enter",
-#                     style="outline",
-#                     width=200,
-#                     on_click=lambda e, gudang_id=Gudang._id: (
-#                         page.clean(),
-#                         barangPage(page, gudang_id)
-#                     )
-#                 )],
-#                 alignment=ft.MainAxisAlignment.CENTER
-#             )
-#         ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
-#     )
-#     for Gudang in ListGudang
-# ]
-
-#     grid_view = ft.GridView(
-#         expand=True,
-#         max_extent=300,
-#         spacing=10,
-#         run_spacing=10,
-#         padding=20,
-#         controls=gudang_cards
-#     )
-
-    
-#     on_click_handler = [
-#         lambda e: print("Home clicked"),
-#         lambda e: print("Settings clicked"),
-#         lambda e: print("History clicked"),
-#         lambda e: createGudangOverlay(page)
-#     ]
-#     nav_items = [
-#         {
-#             "icon": ft.icons.HOME_OUTLINED,
-#             "selected_icon": ft.icons.HOME,
-#             "label": "Home",
-#         },
-#         {
-#             "icon": ft.icons.SETTINGS_OUTLINED,
-#             "selected_icon": ft.icons.SETTINGS,
-#             "label": "Settings",
-#         },
-#         {
-#             "icon": ft.icons.HISTORY_OUTLINED,
-#             "selected_icon": ft.icons.HISTORY,
-#             "label": "History",
-#         },
-#         {
-#             "icon": ft.icons.ADD_OUTLINED,
-#             "selected_icon": ft.icons.ADD,
-#             "label": "Create Gudang",
-#         },
-#     ]
-    
-#     # Create layout
-#     page.appbar = TemplateAppBar(
-#         title="Storage Allocation Manager",
-#         actions=[
-#             ft.IconButton(ft.icons.LIGHT_MODE),
-#             ft.IconButton(ft.icons.SETTINGS),
-#         ]
-#     )
-    
-#     page.navigation_rail = TemplateNavigationRail(
-#         destinations=nav_items,
-#         on_click_handlers=on_click_handler
-#     )
-    
-#     page.add(
-#         ft.Row([
-#             page.navigation_rail,
-#             ft.VerticalDivider(width=1),
-#             grid_view
-#         ], expand=True)
-#     )
-
-    # TemplateButton(
-    #     text="Create",
-    #     style="primary",
-    #     on_click=lambda e, : (
-    #         createGudangOverlay(page)
-    #     )
-    # ),    
-
-# if __name__ == "__main__":
-#     ft.app(gudangPage)
