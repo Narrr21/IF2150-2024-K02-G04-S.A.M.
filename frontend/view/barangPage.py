@@ -257,7 +257,7 @@ def barangPage(page: ft.Page, id: int):
     search_bar = TemplateTextField(
         label="Search",
         hint_text="Search by name",
-        expand = True, 
+        # expand = True, 
         suffix = ft.IconButton(
             ft.icons.CLOSE,
             on_click=on_clear_search_click
@@ -315,33 +315,33 @@ def barangPage(page: ft.Page, id: int):
         lambda e, gudang_id=id: addBarangOverlay(page, gudang_id)
     ]
     # Setup navigation rail
-    # nav_items = [
-    #     {
-    #         "icon": ft.icons.HOME_OUTLINED,
-    #         "selected_icon": ft.icons.HOME,
-    #         "label": "Home",
-    #     },y
-    #     {
-    #         "icon": ft.icons.SETTINGS_OUTLINED,
-    #         "selected_icon": ft.icons.SETTINGS,
-    #         "label": "Settings",
-    #     },
-    #     {
-    #         "icon": ft.icons.HISTORY_OUTLINED,
-    #         "selected_icon": ft.icons.HISTORY,
-    #         "label": "History",
-    #     },
-    #     {
-    #         "icon": ft.icons.ADD_OUTLINED,
-    #         "selected_icon": ft.icons.ADD,
-    #         "label": "Create Barang",
-    #     },
-    #     {
-    #         "icon": ft.icons.ADD_OUTLINED,
-    #         "selected_icon": ft.icons.ADD,
-    #         "label": "Add Barang",
-    #     }, 
-    # ]
+    nav_items = [
+        {
+            "icon": ft.icons.HOME_OUTLINED,
+            "selected_icon": ft.icons.HOME,
+            "label": "Home",
+        },
+        {
+            "icon": ft.icons.SETTINGS_OUTLINED,
+            "selected_icon": ft.icons.SETTINGS,
+            "label": "Settings",
+        },
+        {
+            "icon": ft.icons.HISTORY_OUTLINED,
+            "selected_icon": ft.icons.HISTORY,
+            "label": "History",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Create Barang",
+        },
+        {
+            "icon": ft.icons.ADD_OUTLINED,
+            "selected_icon": ft.icons.ADD,
+            "label": "Add Barang",
+        }, 
+    ]
     
     # Create layout
     page.appbar = TemplateAppBar(
@@ -352,28 +352,45 @@ def barangPage(page: ft.Page, id: int):
         ]
     )
     
-    # page.navigation_rail = TemplateNavigationRail(
-    #     destinations=nav_items,
-    #     on_click_handlers=on_click_handler
-    # )
+    page.navigation_rail = TemplateNavigationRail(
+        destinations=nav_items,
+        # on_click_handlers=on_click_handler
+    )
     
     search_button =  TemplateButton("Search", on_click= on_search_click)
     page.add(
-        ft.Column(
+        ft.Row(
             [ 
-                ft.Row(
+                page.navigation_rail,
+                ft.Column(
                     [
-                        search_bar,
-                        search_button,
+                        ft.Row(
+                            [   
+                                ft.Container(
+                                content=search_bar,  # Wrap search_bar in a container
+                                expand=True,  # This ensures it stretches
+                                ),
+                                ft.Container(
+                                    width = 10
+                                ),
+                                search_button,
+                            ],
+                            expand=False,
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        ),
+                        ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
+                        content,
+
                     ],
                     expand=True,
-                    alignment=ft.alignment.top_left
-                ),
-                ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
-                content,
+                    alignment=ft.MainAxisAlignment.START,  # Align items in this column to the top
+
+                )
             ],
-            expand=True
-        )
+            expand=True,
+            alignment=ft.CrossAxisAlignment.START  # Align NavigationRail and Column at the top
+
+        ),
     )
 
 if __name__ == "__main__":
