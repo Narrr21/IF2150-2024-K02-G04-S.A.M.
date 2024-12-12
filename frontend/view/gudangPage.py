@@ -248,7 +248,7 @@ def createGudangOverlay(page: ft.Page):
 
     page.show_dialog(dlg)
 
-class GudangPage(ft.UserControl):
+class gudangPage(ft.UserControl):
     # Initialize page with template
     def __init__(self, page: ft.Page, content_area: ft.Container):
         super().__init__()
