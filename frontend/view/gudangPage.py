@@ -1,8 +1,7 @@
 import flet as ft
 from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialogTextField, TemplateDialog,
-    TemplateCard, TemplateListItem, TemplatePage,
-    TemplateAppBar, TemplateNavigationRail, TemplateIconButton
+    TemplateCard, TemplateIconButton
 )
 from frontend.const import DARK_TEXT, TURQUOISE
 from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang
@@ -15,10 +14,7 @@ def deleteGudangOverlay(page: ft.Page, id: int):
 
     def confirm_delete(e):
         delete_gudang(id)
-        dlg.open = False
-        page.clean()
-        gudangPage(page)
-        page.update()
+        page.close_dialog()
 
     dlg = TemplateDialog(
         title="Confirm Delete",
@@ -37,9 +33,7 @@ def deleteGudangOverlay(page: ft.Page, id: int):
         ]
     )
 
-    page.overlay.append(dlg)
-    dlg.open = True
-    page.update()
+    page.show_dialog(dlg)
 
 def editGudangOverlay(page: ft.Page, id: int):
     def close_dlg(e):
@@ -107,11 +101,8 @@ def editGudangOverlay(page: ft.Page, id: int):
             gudang.name = updated_name
         if updated_max_capacity:    
             gudang.max_capacity = updated_max_capacity
-        dlg.open = False
         update_gudang(gudang)
-        page.clean()
-        gudangPage(page)
-        page.update()
+        page.close_dialog()
 
     gudang = get_gudang(id)
     dlg = TemplateDialogTextField(
@@ -145,14 +136,11 @@ def editGudangOverlay(page: ft.Page, id: int):
         ]
     )
 
-    page.overlay.append(dlg)
-    dlg.open = True
-    page.update()
+    page.show_dialog(dlg)
 
 def createGudangOverlay(page: ft.Page):
     def close_dlg(e):
-        dlg.open = False
-        page.update()
+        page.close_dialog()
 
     def validate_input_name(e):
         gudang_name_field = dlg.fields[0]
@@ -223,10 +211,7 @@ def createGudangOverlay(page: ft.Page):
             return
         
         create_gudang(gudang_name, 0, max_capacity, [])
-        dlg.open = False
-        page.clean()
-        gudangPage(page)
-        page.update()
+        page.close_dialog()
         
 
     dlg = TemplateDialogTextField(
@@ -261,16 +246,16 @@ def createGudangOverlay(page: ft.Page):
         ]
     )
 
-    page.overlay.append(dlg)
-    dlg.open = True
-    page.update()
+    page.show_dialog(dlg)
 
-class gudangPage(ft.UserControl):
+class GudangPage(ft.UserControl):
     # Initialize page with template
-    def __init__(self):
+    def __init__(self, page: ft.Page):
         super().__init__()
+        self.page = page
 
     def build(self):
+        page = self.page
         ListGudang = get_all_gudang()
         gudang_cards = [
         TemplateCard(
