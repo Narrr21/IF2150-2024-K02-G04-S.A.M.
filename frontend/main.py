@@ -5,7 +5,7 @@ from frontend.template import (
 )
 from frontend.view.loginPage import LoginPage
 from frontend.view.barangPage import barangPage
-from frontend.view.gudangPage import GudangPage
+from frontend.view.gudangPage import *
 
 
 
@@ -52,7 +52,6 @@ def main(page: ft.Page):
 
     # Pages
     login_page = LoginPage(page, handle_login)
-    gudangPage = GudangPage(page)
     
     def on_page_resize(e):
         login_page.height = page.window.height
@@ -62,7 +61,10 @@ def main(page: ft.Page):
 
     def show_main_content():
         # Your existing main content setup
-        content_area = ft.Container(content=gudangPage, expand=True)
+        content_area = ft.Container(expand=True)
+        gudangPage = GudangPage(page, content_area)
+
+        content_area.content = gudangPage
         
         def route_change(route):
             # selected_index = page.navigation_rail.selected_index
@@ -76,7 +78,8 @@ def main(page: ft.Page):
             elif selected_index == 2:
                 content_area.content = gudangPage
             elif selected_index == 3:
-                content_area.content = gudangPage
+                createGudangOverlay(page)  # Call createGudangOverlay directly
+                page.update()
                 
             page.update()
             

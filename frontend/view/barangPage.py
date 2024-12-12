@@ -216,62 +216,42 @@ def createBarangOverlay(page: ft.Page, id: int):
     dlg.open = True
     page.update()
 
-def barangPage(page: ft.Page, id: int):
-    # page.clean()
-    tempgudang = get_gudang(id)
-
-    list_barang = get_barang_by_gudang(tempgudang)
-    list_int_barang = []
-    for barang in tempgudang.list_barang:
-        list_int_barang.append(barang[1])
-
-    list_barang_and_int = []
-    for i in range(len(list_barang)):
-        list_barang_and_int.append([list_barang[i], list_int_barang[i]])
-
-    list_barang_and_int = sorted(list_barang_and_int, key=lambda x: x[1], reverse=False)
-    # Initialize page with template
-    page.__class__ = TemplatePage
-    page.title = "Page Barang"
-
-    # Create sample content
+class barangPage(ft.UserControl):
+    #Initialize page with template
+    def __init__(self,page: ft.Page, id: int):
+        super().__init__()
+        self.page = page
+        self.id = id
+        self.tempgudang = get_gudang(id)
+        self.list_barang = get_barang_by_gudang(self.tempgudang)
+        self.list_int_barang = [barang[1] for barang in self.tempgudang.list_barang]
+        self.list_barang_and_int = [
+            [self.list_barang[i],self.list_int_barang[i]] for i in range(len(self.list_barang))
+        ]
+        self.list_barang_and_int.sort(key=lambda x: x[1], reverse=False)
+        self.filtered_list = self.list_barang_and_int
 
 
-    filtered_list = list_barang_and_int
-
-    def on_search_click(e):
-        nonlocal filtered_list
-        search_query =search_bar.value.lower()
-        filtered_list = [
-            item for item in list_barang_and_int
+    def on_search_click(self,e):
+        search_query =self.search_bar.value.lower()
+        self.filtered_list = [
+            item for item in self.list_barang_and_int
             if search_query in item[0].name.lower()
         ]
-        refresh_content()
+        self.refresh_content()
 
-    def on_clear_search_click(e):
-        nonlocal filtered_list
-        search_bar.value = ""  # Clear the search bar
-        filtered_list = list_barang_and_int  # Reset to show all the goods
-        refresh_content()
+    def on_clear_search_click(self,e):
+        self.search_bar.value = ""  # Clear the search bar
+        self.filtered_list = self.list_barang_and_int  # Reset to show all the goods
+        self.refresh_content()
 
-    search_bar = TemplateTextField(
-        label="Search",
-        hint_text="Search by name",
-        # expand = True, 
-        suffix = ft.IconButton(
-            ft.icons.CLOSE,
-            on_click=on_clear_search_click
-        ), on_submit = on_search_click
-    )
-
-
-    def refresh_content():
-        content.controls.clear()
-        content.controls.append(
+    def refresh_content(self):
+        self.content.controls.clear()
+        self.content.controls.append(
             ft.Column(
                 [
                     # Show "No result" message if no results found
-                    ft.Text("No result", size=16, color="red") if len(filtered_list) == 0 else ft.Text(""),
+                    ft.Text("No result", size=16, color="red") if len(self.filtered_list) == 0 else ft.Text(""),
                     ft.Column(
                         [
                             ft.Row(
@@ -291,7 +271,7 @@ def barangPage(page: ft.Page, id: int):
                                 ],
                                 expand=True
                             )
-                            for item in filtered_list
+                            for item in self.filtered_list
                         ],
                         expand=True
                     ),
@@ -299,106 +279,220 @@ def barangPage(page: ft.Page, id: int):
                 expand=True
             )
         )
-        page.update()
+        self.page.update()
+
+    def build(self):
+        self.search_bar = TemplateTextField(
+            label="Search",
+            hint_text="Search by name",
+            # expand = True, 
+            suffix = ft.IconButton(
+                ft.icons.CLOSE,
+                on_click=self.on_clear_search_click
+            ), on_submit = self.on_search_click
+        )
+
+        self.content = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+
+        self.refresh_content()
+
+        return ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Container(self.search_bar, expand=True),
+                            TemplateButton("Search", on_click=self.on_search_click)
+                        ],
+                        expand=True
+                    ),
+                    self.content
+                ],
+                expand=True
+            )
+
+# def barangPage(page: ft.Page, id: int):
+#     # page.clean()
+#     tempgudang = get_gudang(id)
+
+#     list_barang = get_barang_by_gudang(tempgudang)
+#     list_int_barang = []
+#     for barang in tempgudang.list_barang:
+#         list_int_barang.append(barang[1])
+
+#     list_barang_and_int = []
+#     for i in range(len(list_barang)):
+#         list_barang_and_int.append([list_barang[i], list_int_barang[i]])
+
+#     list_barang_and_int = sorted(list_barang_and_int, key=lambda x: x[1], reverse=False)
+#     # Initialize page with template
+#     page.__class__ = TemplatePage
+#     page.title = "Page Barang"
+
+#     # Create sample content
 
 
-    content = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+#     filtered_list = list_barang_and_int
 
-    refresh_content()
+#     def on_search_click(e):
+#         nonlocal filtered_list
+#         search_query =search_bar.value.lower()
+#         filtered_list = [
+#             item for item in list_barang_and_int
+#             if search_query in item[0].name.lower()
+#         ]
+#         refresh_content()
+
+#     def on_clear_search_click(e):
+#         nonlocal filtered_list
+#         search_bar.value = ""  # Clear the search bar
+#         filtered_list = list_barang_and_int  # Reset to show all the goods
+#         refresh_content()
+
+#     search_bar = TemplateTextField(
+#         label="Search",
+#         hint_text="Search by name",
+#         # expand = True, 
+#         suffix = ft.IconButton(
+#             ft.icons.CLOSE,
+#             on_click=on_clear_search_click
+#         ), on_submit = on_search_click
+#     )
+
+
+#     def refresh_content():
+#         content.controls.clear()
+#         content.controls.append(
+#             ft.Column(
+#                 [
+#                     # Show "No result" message if no results found
+#                     ft.Text("No result", size=16, color="red") if len(filtered_list) == 0 else ft.Text(""),
+#                     ft.Column(
+#                         [
+#                             ft.Row(
+#                                 [
+#                                     TemplateButton(
+#                                         "Edit",
+#                                         on_click=lambda e, barang=item[0]: updateBarangOverlay(page, barang._id, tempgudang._id)
+#                                     ),
+#                                     TemplateButton(
+#                                         "Delete",
+#                                         on_click=lambda e, barang=item[0]: deleteBarangOverlay(page, barang._id, tempgudang._id)
+#                                     ),
+#                                     TemplateListItem(
+#                                         title=item[0].name,
+#                                         subtitle=f"qty: {str(item[1])} \nsize: {str(item[0].capacity)}",
+#                                     )
+#                                 ],
+#                                 expand=True
+#                             )
+#                             for item in filtered_list
+#                         ],
+#                         expand=True
+#                     ),
+#                 ],
+#                 expand=True
+#             )
+#         )
+#         page.update()
+
+
+#     content = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+
+#     refresh_content()
 
     
-    on_click_handler = [
-        lambda e: print("Home clicked"),
-        lambda e: print("Settings clicked"),
-        lambda e: print("History clicked"),
-        lambda e, gudang_id=id: createBarangOverlay(page, gudang_id),
-        lambda e, gudang_id=id: addBarangOverlay(page, gudang_id)
-    ]
-    # Setup navigation rail
-    nav_items = [
-        {
-            "icon": ft.icons.HOME_OUTLINED,
-            "selected_icon": ft.icons.HOME,
-            "label": "Home",
-        },
-        {
-            "icon": ft.icons.SETTINGS_OUTLINED,
-            "selected_icon": ft.icons.SETTINGS,
-            "label": "Settings",
-        },
-        {
-            "icon": ft.icons.HISTORY_OUTLINED,
-            "selected_icon": ft.icons.HISTORY,
-            "label": "History",
-        },
-        {
-            "icon": ft.icons.ADD_OUTLINED,
-            "selected_icon": ft.icons.ADD,
-            "label": "Create Barang",
-        },
-        {
-            "icon": ft.icons.ADD_OUTLINED,
-            "selected_icon": ft.icons.ADD,
-            "label": "Add Barang",
-        }, 
-    ]
+#     on_click_handler = [
+#         lambda e: print("Home clicked"),
+#         lambda e: print("Settings clicked"),
+#         lambda e: print("History clicked"),
+#         lambda e, gudang_id=id: createBarangOverlay(page, gudang_id),
+#         lambda e, gudang_id=id: addBarangOverlay(page, gudang_id)
+#     ]
+#     # Setup navigation rail
+#     nav_items = [
+#         {
+#             "icon": ft.icons.HOME_OUTLINED,
+#             "selected_icon": ft.icons.HOME,
+#             "label": "Home",
+#         },
+#         {
+#             "icon": ft.icons.SETTINGS_OUTLINED,
+#             "selected_icon": ft.icons.SETTINGS,
+#             "label": "Settings",
+#         },
+#         {
+#             "icon": ft.icons.HISTORY_OUTLINED,
+#             "selected_icon": ft.icons.HISTORY,
+#             "label": "History",
+#         },
+#         {
+#             "icon": ft.icons.ADD_OUTLINED,
+#             "selected_icon": ft.icons.ADD,
+#             "label": "Create Barang",
+#         },
+#         {
+#             "icon": ft.icons.ADD_OUTLINED,
+#             "selected_icon": ft.icons.ADD,
+#             "label": "Add Barang",
+#         }, 
+#     ]
     
-    # Create layout
-    page.appbar = TemplateAppBar(
-        title="Design System",
-        actions=[
-            ft.IconButton(ft.icons.LIGHT_MODE),
-            ft.IconButton(ft.icons.SETTINGS),
-        ]
-    )
+#     # Create layout
+#     page.appbar = TemplateAppBar(
+#         title="Design System",
+#         actions=[
+#             ft.IconButton(ft.icons.LIGHT_MODE),
+#             ft.IconButton(ft.icons.SETTINGS),
+#         ]
+#     )
     
-    page.navigation_rail = TemplateNavigationRail(
-        destinations=nav_items,
-        # on_click_handlers=on_click_handler
-    )
+#     page.navigation_rail = TemplateNavigationRail(
+#         destinations=nav_items,
+#         # on_click_handlers=on_click_handler
+#     )
     
-    search_button =  TemplateButton("Search", on_click= on_search_click)
-    page.add(
-        ft.Row(
-            [ 
-                page.navigation_rail,
-                ft.Column(
-                    [
-                        ft.Row(
-                            [   
-                                ft.Container(
-                                content=search_bar,  # Wrap search_bar in a container
-                                expand=True,  # This ensures it stretches
-                                ),
-                                ft.Container(
-                                    width = 10
-                                ),
-                                search_button,
-                            ],
-                            expand=False,
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                        ),
-                        ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
-                        content,
+#     search_button =  TemplateButton("Search", on_click= on_search_click)
+#     page.add(
+#         ft.Row(
+#             [ 
+#                 page.navigation_rail,
+#                 ft.Column(
+#                     [
+#                         ft.Row(
+#                             [   
+#                                 ft.Container(
+#                                 content=search_bar,  # Wrap search_bar in a container
+#                                 expand=True,  # This ensures it stretches
+#                                 ),
+#                                 ft.Container(
+#                                     width = 10
+#                                 ),
+#                                 search_button,
+#                             ],
+#                             expand=False,
+#                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+#                         ),
+#                         ft.Text(tempgudang.gudang_name, size=20, weight="bold"),
+#                         content,
 
-                    ],
-                    expand=True,
-                    alignment=ft.MainAxisAlignment.START,  # Align items in this column to the top
+#                     ],
+#                     expand=True,
+#                     alignment=ft.MainAxisAlignment.START,  # Align items in this column to the top
 
-                )
-            ],
-            expand=True,
-            alignment=ft.CrossAxisAlignment.START  # Align NavigationRail and Column at the top
+#                 )
+#             ],
+#             expand=True,
+#             alignment=ft.CrossAxisAlignment.START  # Align NavigationRail and Column at the top
 
-        ),
-    )
+#         ),
+#     )
 
-if __name__ == "__main__":
-    def main(page: ft.Page):
-        # Replace '1' with the appropriate gudang_id or fetch dynamically
-        barangPage(page, id=2)
+# if __name__ == "__main__":
+#     def main(page: ft.Page):
+#         # Replace '1' with the appropriate gudang_id or fetch dynamically
+#         barangPage(page, id=2)
 
-    ft.app(target=main)
+#     ft.app(target=main)
 
 # class BarangPage(ft.UserControl):
 #     def __init__(self, id: int):
