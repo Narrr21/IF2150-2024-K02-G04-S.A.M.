@@ -5,9 +5,10 @@ from backend.login.loginManager import LoginManager
 class LoginPage(ft.UserControl):
     login_manager = LoginManager()
   
-    def __init__(self, on_login=None):
+    def __init__(self, page: ft.Page, on_login=None):
         super().__init__()
         self.on_login = on_login
+        self.page = page
 
     def build(self):
         self.username_field = TemplateTextField(
@@ -26,7 +27,6 @@ class LoginPage(ft.UserControl):
         )
 
         return ft.Row([ft.Column([
-                            ft.Container(height=50),  # Spacing
                             ft.Text("Login", size=20, weight="bold"),
                             self.username_field,
                             self.password_field,
@@ -40,7 +40,7 @@ class LoginPage(ft.UserControl):
                             ft.Container(height=10),  # Spacing
                         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                          scroll=ft.ScrollMode.AUTO,
-                         expand=True)], expand=True)
+                         expand=True)], expand=True, height=self.page.height)
 
     def handle_login(self, e):
         if self.on_login:
