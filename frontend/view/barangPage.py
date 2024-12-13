@@ -85,9 +85,9 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
                 dlg.fields[1].border_color = "red"
                 is_valid = False
 
-        if updated_qty:
+        if updated_size:
             try:
-                updated_qty = int(updated_qty)
+                updated_size = int(updated_size)
             except ValueError:
                 dlg.fields[1].error_text = "Size must be an integer!"
                 dlg.fields[1].border_color = "red"
@@ -279,6 +279,7 @@ class barangPage(ft.UserControl):
         self.filtered_list = self.list_barang_and_int
 
     def refresh_data(self):
+        self.tempgudang = get_gudang(self.id)
         self.list_barang = get_barang_by_gudang(self.tempgudang)
         self.list_int_barang = [barang[1] for barang in self.tempgudang.list_barang]
         self.list_barang_and_int = [
