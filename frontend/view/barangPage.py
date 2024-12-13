@@ -6,7 +6,7 @@ from frontend.template import (
 )
 from backend.app import *
 
-def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int):
+def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     def close_dlg(e):
         dlg.open = False
         page.update()
@@ -14,13 +14,13 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int):
     def confirm_delete(e):
         delete_barang(id)
         dlg.open = False
-        page.clean()
-        barangPage(page, gudang_id)
+        # page.clean()
+        barang_page.refresh_data()
         page.update()
 
     dlg = TemplateDialog(
         title="Confirm Delete",
-        content=ft.Text("Are you sure you want to delete this barang?"),
+        content="Are you sure you want to delete this barang?",
         actions=[
             TemplateButton(
                 text="Yes",
@@ -321,7 +321,7 @@ class barangPage(ft.UserControl):
                                     ),
                                     TemplateButton(
                                         "Delete",
-                                        on_click=lambda e, barang=item[0]: deleteBarangOverlay(self.page, barang._id, self.tempgudang._id)
+                                        on_click=lambda e, barang=item[0]: deleteBarangOverlay(self.page, barang._id, self.tempgudang._id, self)
                                     ),
                                     TemplateListItem(
                                         title=item[0].name,
