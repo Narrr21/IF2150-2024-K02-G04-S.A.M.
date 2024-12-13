@@ -39,7 +39,7 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int):
     dlg.open = True
     page.update()
 
-def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
+def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     barang = get_barang(id)
     num = 0
     listbar = get_barang_by_gudang(get_gudang(gudang_id))
@@ -52,11 +52,50 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
         dlg.open = False
         page.update()
 
+    def validate_input(e, field, field_name):
+        """ Validate input when the user types. """
+        if field.value:
+            try:
+                if field_name == "quantity":
+                    int(field.value)
+                elif field_name == "size":
+                    int(field.value)
+                
+                field.error_text = ""
+                field.border_color = "gray"  
+            except ValueError:
+                field.error_text = f"{field_name.capitalize()} must be an integer!"
+                field.border_color = "red"
+        else:
+            field.error_text = ""
+            field.border_color = "gray"
+        page.update()
+
     def save_changes(e):
         # Implement save changes logic here
         updated_name = dlg.fields[0].value
         updated_qty = (dlg.fields[1].value)
         updated_size = (dlg.fields[2].value)
+        is_valid = True
+        if updated_qty:
+            try:
+                updated_qty = int(updated_qty)
+            except ValueError:
+                dlg.fields[1].error_text = "Quantity must be an integer!"
+                dlg.fields[1].border_color = "red"
+                is_valid = False
+
+        if updated_qty:
+            try:
+                updated_qty = int(updated_qty)
+            except ValueError:
+                dlg.fields[1].error_text = "Size must be an integer!"
+                dlg.fields[1].border_color = "red"
+                is_valid = False
+
+        if not is_valid:
+            page.update()
+            return
         if updated_name:
             barang.name = updated_name
         if updated_qty:
@@ -76,12 +115,16 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
             update_barang_qty(barang._id, gudang_id, updated_qty)
         if updated_size:
             barang.capacity = int(updated_size)
-
         num = 0
         update_barang(barang)
+        barang_page.refresh_data()
         dlg.open = False
-        page.clean()
-        barangPage(page, gudang_id)
+        page.update()
+
+        
+
+        # barangPage(page, gudang_id)
+        
 
     
     dlg = TemplateDialogTextField(
@@ -98,28 +141,32 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int):
                 label="Quantity",
                 hint_text="Enter the quantity of the barang (if changed)",
                 width=300,
-                value=str(num)
+                value=str(num),
+                on_change=lambda e: validate_input(e, dlg.fields[1], "quantity")
             ),
             TemplateTextField(
                 label="Size",
                 hint_text="Enter the new size of the barang (if changed)",
                 width=300,
-                value=str(barang.capacity)
+                value=str(barang.capacity),
+                on_change=lambda e: validate_input(e, dlg.fields[2], "size")
+
             ),
         ],
         actions=[
-            TemplateButton(
-                text="Save Changes",
-                style="primary",
-                on_click=save_changes
-            ),
-            TemplateButton(
-                text="Close",
-                style="secondary",
-                on_click=close_dlg
-            ),
-        ]
+                TemplateButton(
+                    text="Save Changes",
+                    style="primary",
+                    on_click=save_changes
+                ),
+                TemplateButton(
+                    text="Close",
+                    style="secondary",
+                    on_click=close_dlg
+                ),
+        ],
     )
+    dlg.content = ft.Column(dlg.fields, height=180)
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
@@ -231,6 +278,17 @@ class barangPage(ft.UserControl):
         self.list_barang_and_int.sort(key=lambda x: x[1], reverse=False)
         self.filtered_list = self.list_barang_and_int
 
+    def refresh_data(self):
+        self.list_barang = get_barang_by_gudang(self.tempgudang)
+        self.list_int_barang = [barang[1] for barang in self.tempgudang.list_barang]
+        self.list_barang_and_int = [
+            [self.list_barang[i],self.list_int_barang[i]] for i in range(len(self.list_barang))
+        ]
+        self.list_barang_and_int.sort(key=lambda x: x[1], reverse=False)
+        self.filtered_list = self.list_barang_and_int
+
+        self.refresh_content()
+
 
     def on_search_click(self,e):
         search_query =self.search_bar.value.lower()
@@ -258,11 +316,11 @@ class barangPage(ft.UserControl):
                                 [
                                     TemplateButton(
                                         "Edit",
-                                        on_click=lambda e, barang=item[0]: updateBarangOverlay(page, barang._id, tempgudang._id)
+                                        on_click=lambda e, barang=item[0]: updateBarangOverlay(self.page, barang._id, self.tempgudang._id,self)
                                     ),
                                     TemplateButton(
                                         "Delete",
-                                        on_click=lambda e, barang=item[0]: deleteBarangOverlay(page, barang._id, tempgudang._id)
+                                        on_click=lambda e, barang=item[0]: deleteBarangOverlay(self.page, barang._id, self.tempgudang._id)
                                     ),
                                     TemplateListItem(
                                         title=item[0].name,
@@ -296,19 +354,33 @@ class barangPage(ft.UserControl):
 
         self.refresh_content()
 
-        return ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.Container(self.search_bar, expand=True),
-                            TemplateButton("Search", on_click=self.on_search_click)
-                        ],
-                        expand=True
-                    ),
-                    self.content
-                ],
-                expand=True
-            )
+        return ft.Container(
+        content=ft.Column(
+            [
+                # Search bar and Gudang name in the same column
+                ft.Column(
+                    [
+                        ft.Row(
+                            [
+                                ft.Container(self.search_bar, expand=True),
+                                TemplateButton("Search", on_click=self.on_search_click),
+                            ],
+                            expand=True
+                        ),
+                        ft.Text(self.tempgudang.gudang_name, size=20, weight="bold"),
+                    ],
+                    spacing=10,
+                ),
+                self.content
+            ],
+            expand=True,
+            alignment=ft.MainAxisAlignment.START,
+            spacing=20 
+        ),
+        expand=True,
+        padding=0,  # Remove padding
+        alignment=ft.alignment.top_center  # Align container content to top-center
+    )
 
 # def barangPage(page: ft.Page, id: int):
 #     # page.clean()
