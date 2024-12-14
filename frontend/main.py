@@ -6,7 +6,7 @@ from frontend.template import (
 from frontend.view.loginPage import LoginPage
 from frontend.view.riwayatPage import riwayatPage
 from frontend.view.barangPage import barangPage
-from frontend.view.gudangPage import *
+from frontend.view.gudangPage import gudangPage, moveBarangOverlay
 
 
 
@@ -76,7 +76,8 @@ def main(page: ft.Page):
             if selected_index == 0:
                 content_area.content = gudang_page
             elif selected_index == 1:
-                content_area.content = gudang_page
+                moveBarangOverlay(page,gudang_page)
+                page.update()
             elif selected_index == 2:
                 content_area.content = riwayat_page
                 
@@ -90,9 +91,9 @@ def main(page: ft.Page):
             "label": "Home",
         },
         {
-            "icon": ft.icons.SETTINGS_OUTLINED,
-            "selected_icon": ft.icons.SETTINGS,
-            "label": "Settings",
+            "icon": ft.icons.DRIVE_FILE_MOVE_OUTLINED,
+            "selected_icon": ft.icons.DRIVE_FILE_MOVE,
+            "label": "Move Barang",
         },
         {
             "icon": ft.icons.HISTORY_OUTLINED,
@@ -103,7 +104,7 @@ def main(page: ft.Page):
         
         # Create layout
         page.appbar = TemplateAppBar(
-            title="Design System",
+            title="Storage Allocation Manager",
             actions=[
                 ft.IconButton(ft.icons.LIGHT_MODE),
                 ft.IconButton(ft.icons.SETTINGS),
