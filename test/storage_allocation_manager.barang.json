@@ -1,0 +1,55 @@
+[{
+  "_id": 1,
+  "name": "Tisu",
+  "capacity": 1,
+  "description": "SKIBIDI",
+  "gudang": [
+    1
+  ]
+},
+{
+  "_id": 2,
+  "name": "Makanan",
+  "capacity": 5,
+  "description": "SKIBIDI",
+  "gudang": [
+    1
+  ]
+},
+{
+  "_id": 3,
+  "name": "Chitato",
+  "capacity": 8,
+  "description": "SKIBIDI",
+  "gudang": [
+    1,
+    2
+  ]
+},
+{
+  "_id": 4,
+  "name": "Mainan",
+  "capacity": 20,
+  "description": "SKIBIDI",
+  "gudang": [
+    1
+  ]
+},
+{
+  "_id": 5,
+  "name": "Toilet",
+  "capacity": 2,
+  "description": "SKIBIDI",
+  "gudang": [
+    2
+  ]
+},
+{
+  "_id": 6,
+  "name": "Mainan Barbie",
+  "capacity": 5,
+  "description": "SKIBIDI",
+  "gudang": [
+    3
+  ]
+}]
