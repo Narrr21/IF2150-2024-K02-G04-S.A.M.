@@ -5,40 +5,8 @@ from frontend.template import (
     TemplateAppBar, TemplateNavigationRail, TemplateDialogTextField
 )
 from backend.app import *
+import datetime
 
-def removeBarangOverlay(page: ft.Page):
-    listbar = get_all_barang()
-
-    def close_dlg(e):
-        dlg.open = False
-        page.update()
-
-    def remove_barangs(e, barang):
-        # Hakim Jomok
-        close_dlg(e)
-
-
-    dlg = TemplateDialogTextField(
-        title="Remove Barang",
-        fields=[
-            TemplateButton(
-                text=Barang.name,
-                style="primary",
-                on_click=lambda e, barang=Barang: remove_barangs(e, barang), 
-            ) for Barang in listbar
-        ],
-        actions=[
-            TemplateButton(
-                text="Close",
-                style="secondary",
-                on_click=close_dlg
-            ),
-        ]
-    )
-    dlg.content = ft.Column(dlg.fields, height=150)
-    page.overlay.append(dlg)
-    dlg.open = True
-    page.update()
 
 def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     def close_dlg(e):
@@ -49,6 +17,10 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         update_barang_qty(id, gudang_id, 0)
         dlg.open = False
         # page.clean()
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([id, gudang_id], "DB", timestamp_str, True)
+        create_riwayat(r)
         barang_page.refresh_data()
         page.update()
 
@@ -168,6 +140,10 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
             barang.capacity = int(updated_size)
         num = 0
         update_barang(barang)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([barang._id], "UB", timestamp_str, True)
+        create_riwayat(r)
         barang_page.refresh_data()
         dlg.open = False
         page.update()
@@ -245,6 +221,10 @@ def addBarangOverlay(page: ft.Page, gudang_id: int, barang_page):
             page.update()
             return
         add_barang(barang, gudang, 1)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([barang._id, gudang._id], "CB", timestamp_str, True)
+        create_riwayat(r)
         close_dlg(e)
 
 
@@ -299,6 +279,10 @@ def createBarangOverlay(page: ft.Page, id: int, barang_page):
                 page.update()
                 return
             create_barang(barang, gudang, qty)
+            timestamp = datetime.datetime.now()
+            timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            r = Riwayat([barang._id, gudang._id], "CB", timestamp_str, True)
+            create_riwayat(r)
         dlg.open = False
 
         barang_page.refresh_data()

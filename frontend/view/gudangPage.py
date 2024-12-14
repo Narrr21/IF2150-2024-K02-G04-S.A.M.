@@ -3,9 +3,51 @@ from frontend.template import (
     TemplateButton, TemplateTextField, TemplateDialogTextField, TemplateDialog,
     TemplateCard, TemplateIconButton
 )
+import datetime
 from frontend.const import DARK_TEXT, TURQUOISE
-from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang, create_gudang, Gudang, get_gudang_by_name, get_barang_by_name, pindah_barang
+from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang, create_gudang, Gudang, get_gudang_by_name, get_barang_by_name, pindah_barang, create_riwayat, Riwayat, delete_barang, get_all_barang
 from frontend.view.barangPage import barangPage
+
+def removeBarangOverlay(page: ft.Page, gudang_page):
+    listbar = get_all_barang()
+
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def remove_barangs(e, barang):
+        delete_barang(barang._id)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([barang._id], "RB", timestamp_str, True)
+        create_riwayat(r)
+        close_dlg(e)
+        gudang_page.refreshScreen()
+        page.update()
+
+
+
+    dlg = TemplateDialogTextField(
+        title="Remove Barang",
+        fields=[
+            TemplateButton(
+                text=Barang.name,
+                style="primary",
+                on_click=lambda e, barang=Barang: remove_barangs(e, barang), 
+            ) for Barang in listbar
+        ],
+        actions=[
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+    dlg.content = ft.Column(dlg.fields, height=150)
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
 
 
 def moveBarangOverlay(page: ft.Page, gudang_page):
@@ -41,18 +83,20 @@ def moveBarangOverlay(page: ft.Page, gudang_page):
             dlg.fields[2].border_color = "red"
             dlg.fields[2].update()
             return
-        if int(qty) > qty_barang_in_source:
+        elif int(qty) > qty_barang_in_source:
             dlg.fields[3].error_text = "Quantity exceeds the available quantity in source gudang"
             dlg.fields[3].border_color = "red"
             dlg.fields[3].update()
             return
 
-        curr_capacity, max_capacity = get_gudang(id_gudang_destination).capacity, get_gudang(id_gudang_destination).max_capacity
-        if curr_capacity + int(qty)*barangs.capacity > max_capacity:
-            dlg.fields[1].error_text = "Destination gudang don't have enough space!"
-            dlg.fields[1].border_color = "red"
-            dlg.fields[1].update()
-            return
+        else :
+            curr_capacity, max_capacity = get_gudang(id_gudang_destination).capacity, get_gudang(id_gudang_destination).max_capacity
+            if curr_capacity + int(qty)*barangs.capacity > max_capacity:
+                dlg.fields[1].error_text = "Destination gudang don't have enough space!"
+                dlg.fields[1].border_color = "red"
+                dlg.fields[1].update()
+                return
+        
         
         
             
@@ -60,6 +104,10 @@ def moveBarangOverlay(page: ft.Page, gudang_page):
         gudang_destination = get_gudang_by_name(name_destination)
         barang_move = get_barang_by_name(name_barang)
         pindah_barang(barang_move._id, gudang_source._id, gudang_destination._id, int(qty))
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([id_barang, gudang_destination._id, gudang_source._id, qty], "PB", timestamp_str, True)
+        create_riwayat(r)
         dlg.open = False
 
         gudang_page.refreshScreen()
@@ -116,6 +164,10 @@ def deleteGudangOverlay(page: ft.Page, id: int, gudang_page):
 
     def confirm_delete(e):
         delete_gudang(id)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat(id, "DG", timestamp_str, True)
+        create_riwayat(r)
         gudang_page.refreshScreen()
         page.close_dialog()
 
@@ -210,6 +262,10 @@ def editGudangOverlay(page: ft.Page, id: int, gudang_page):
         if updated_max_capacity > 0:    
             gudang.max_capacity = updated_max_capacity
         update_gudang(gudang)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([gudang._id], "UG", timestamp_str, True)
+        create_riwayat(r)
         gudang_page.refreshScreen()
         page.close_dialog()
 
@@ -318,9 +374,13 @@ def createGudangOverlay(page: ft.Page, gudang_page):
             max_capacity_field.border_color = "red"
             max_capacity_field.update()
             return
-        
+
         gudang = Gudang(gudang_name, 0, max_capacity, [])
         create_gudang(gudang)
+        timestamp = datetime.datetime.now()
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        r = Riwayat([gudang._id], "CG", timestamp_str, True)
+        create_riwayat(r)
         gudang_page.refreshScreen()
         page.close_dialog()
         
