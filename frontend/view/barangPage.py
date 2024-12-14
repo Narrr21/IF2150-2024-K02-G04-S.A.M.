@@ -12,7 +12,7 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         page.update()
 
     def confirm_delete(e):
-        delete_barang(id)
+        update_barang_qty(id, gudang_id, 0)
         dlg.open = False
         # page.clean()
         barang_page.refresh_data()
@@ -92,6 +92,23 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
                 dlg.fields[1].error_text = "Size must be an integer!"
                 dlg.fields[1].border_color = "red"
                 is_valid = False
+
+        listgud = get_all_gudang()
+        for gudang in listgud:
+            item_qty = 0
+            for barang in gudang.list_barang:
+                if get_barang(barang[0]).name == updated_name:
+                    dlg.fields[0].error_text = "Name already exists!"
+                    dlg.fields[0].border_color = "red"
+                    is_valid = False
+                    break
+                if get_barang(barang[0])._id == id:
+                    item_qty = barang[1]
+            if gudang.capacity + item_qty*updated_size > gudang.max_capacity:
+                dlg.fields[2].error_text = "Size too large! Gudang capacity exceeded!"
+                dlg.fields[2].border_color = "red"
+                is_valid = False
+            
 
         if not is_valid:
             page.update()
@@ -188,6 +205,11 @@ def addBarangOverlay(page: ft.Page, gudang_id: int, barang_page):
         page.update()
 
     def add_barangs(e, barang):
+        if gudang.capacity + barang.capacity > gudang.max_capacity:
+            dlg.fields[0].error_text = "Size too large! Gudang capacity exceeded!"
+            dlg.fields[0].border_color = "red"
+            page.update()
+            return
         add_barang(barang, gudang, 1)
         close_dlg(e)
 
@@ -227,7 +249,21 @@ def createBarangOverlay(page: ft.Page, id: int, barang_page):
             qty = int(qty)
             size = int(size)
             barang = Barang(name, size, "SKIBIDI", [])
+            listbar = get_all_barang()
+            for bar in listbar:
+                if bar.name == name:
+                    dlg.fields[0].error_text = "Name already exists!"
+                    dlg.fields[0].border_color = "red"
+                    page.update()
+                    return
             gudang = get_gudang(id)
+            if gudang.capacity + qty*size > gudang.max_capacity:
+                dlg.fields[1].error_text = "Size and capacity exceeded!"
+                dlg.fields[1].border_color = "red"
+                dlg.fields[2].error_text = "Size and capacity exceeded!"
+                dlg.fields[2].border_color = "red"
+                page.update()
+                return
             create_barang(barang, gudang, qty)
         dlg.open = False
 

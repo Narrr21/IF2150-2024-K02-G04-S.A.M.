@@ -19,13 +19,50 @@ def moveBarangOverlay(page: ft.Page, gudang_page):
         name_destination = dlg.fields[1].value
         name_barang = dlg.fields[2].value
         qty = dlg.fields[3].value
+
+        if (get_gudang_by_name(name_source) is None) or (get_gudang_by_name(name_destination) is None) or (get_barang_by_name(name_barang) is None):
+            dlg.fields[0].error_text = "Gudang or Barang not found"
+            dlg.fields[0].border_color = "red"
+            dlg.fields[0].update()
+
+        barangs = get_barang_by_name(name_barang)
+        id_barang = barangs._id
+        id_gudang_source = get_gudang_by_name(name_source)._id
+        id_gudang_destination = get_gudang_by_name(name_destination)._id
+        qty_barang_in_source = 0
+        barang_is_in = False
+        for barang in get_gudang(id_gudang_source).list_barang:
+            if barang[0] == id_barang:
+                qty_barang_in_source = barang[1]
+                barang_is_in = True
+                break
+        if not barang_is_in:
+            dlg.fields[2].error_text = "Barang not found in source gudang"
+            dlg.fields[2].border_color = "red"
+            dlg.fields[2].update()
+            return
+        if int(qty) > qty_barang_in_source:
+            dlg.fields[3].error_text = "Quantity exceeds the available quantity in source gudang"
+            dlg.fields[3].border_color = "red"
+            dlg.fields[3].update()
+            return
+
+        curr_capacity, max_capacity = get_gudang(id_gudang_destination).capacity, get_gudang(id_gudang_destination).max_capacity
+        if curr_capacity + int(qty)*barangs.capacity > max_capacity:
+            dlg.fields[1].error_text = "Destination gudang don't have enough space!"
+            dlg.fields[1].border_color = "red"
+            dlg.fields[1].update()
+            return
+        
+        
+            
         gudang_source = get_gudang_by_name(name_source)
         gudang_destination = get_gudang_by_name(name_destination)
         barang_move = get_barang_by_name(name_barang)
-        pindah_barang(barang_move.id, gudang_source.id, gudang_destination.id, int(qty))
+        pindah_barang(barang_move._id, gudang_source._id, gudang_destination._id, int(qty))
         dlg.open = False
 
-        gudang_page.refresh_screen()
+        gudang_page.refreshScreen()
         page.update()
         
     dlg = TemplateDialogTextField(
@@ -77,37 +114,27 @@ def deleteGudangOverlay(page: ft.Page, id: int, gudang_page):
         dlg.open = False
         page.update()
 
-    dlg = TemplateDialogTextField(
-        title="Move Barang",
-        fields=[
-            TemplateTextField(
-                label="Gudang Source",
-                hint_text="Enter Gudang Name",
-                width=300,
-                autofocus=True,
-                on_change=validate_input_name
-            ),
-            TemplateTextField(
-                label="Gudang Destination",
-                hint_text="Enter Max Capacity",
-                width=300,
-                on_change=validate_input_capacity
-            ),
-        ],
+    def confirm_delete(e):
+        delete_gudang(id)
+        gudang_page.refreshScreen()
+        page.close_dialog()
+
+    dlg = TemplateDialog(
+        title="Confirm Delete",
+        content="Are you sure you want to delete this gudang?",
         actions=[
             TemplateButton(
-                text="Save Changes",
+                text="Yes",
                 style="primary",
-                on_click=save_changes
+                on_click=confirm_delete
             ),
             TemplateButton(
-                text="Cancel",
+                text="No",
                 style="secondary",
                 on_click=close_dlg
             ),
         ]
     )
-
     page.show_dialog(dlg)
 
 def editGudangOverlay(page: ft.Page, id: int, gudang_page):
