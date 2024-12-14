@@ -102,14 +102,14 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         listgud = get_all_gudang()
         for gudang in listgud:
             item_qty = 0
-            for barang in gudang.list_barang:
-                if get_barang(barang[0]).name == updated_name:
+            for item in gudang.list_barang:
+                if get_barang(item[0]).name == updated_name:
                     dlg.fields[0].error_text = "Name already exists!"
                     dlg.fields[0].border_color = "red"
                     is_valid = False
                     break
-                if get_barang(barang[0])._id == id:
-                    item_qty = barang[1]
+                if get_barang(item[0])._id == id:
+                    item_qty = item[1]
             if gudang.capacity + item_qty*updated_size > gudang.max_capacity:
                 dlg.fields[2].error_text = "Size too large! Gudang capacity exceeded!"
                 dlg.fields[2].border_color = "red"
