@@ -11,12 +11,12 @@ Setiap aktivitas yang dilakukan akan tercatat di menu Riwayat yang terdapat di a
 ## Anggota Kelompok
 
 | No  | NIM      | Nama                      |
-| :-- | -------- | ------------------------- | --- |
-| 1   | 13122080 | Adi Haditya Nursyam       |     |
-| 2   | 13523064 | Samuel Gerrard H. Girsang |     |
-| 3   | 13523030 | Julius Arthur             |     |
-| 4   | 13523076 | Nadhif Al Rozin           |     |
-| 5   | 13523084 | Lutfi Hakim Yusra         |     |
+| :-- | -------- | ------------------------- |
+| 1   | 13122080 | Adi Haditya Nursyam       |
+| 2   | 13523064 | Samuel Gerrard H. Girsang |
+| 3   | 13523030 | Julius Arthur             |   
+| 4   | 13523076 | Nadhif Al Rozin           |     
+| 5   | 13523084 | Lutfi Hakim Yusra         |     
 
 ## Cara Menjalankan Aplikasi
 
