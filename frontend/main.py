@@ -5,7 +5,7 @@ from frontend.template import (
 )
 from frontend.view.loginPage import LoginPage
 from frontend.view.riwayatPage import riwayatPage
-from frontend.view.barangPage import barangPage
+from frontend.view.barangPage import barangPage, removeBarangOverlay
 from frontend.view.gudangPage import gudangPage, moveBarangOverlay
 
 
@@ -80,6 +80,8 @@ def main(page: ft.Page):
                 moveBarangOverlay(page,gudang_page)
                 page.update()
             elif selected_index == 2:
+                removeBarangOverlay(page)
+            elif selected_index == 3:
                 content_area.content = riwayat_page
                 
             page.update()
@@ -94,6 +96,11 @@ def main(page: ft.Page):
         {
             "icon": ft.icons.DRIVE_FILE_MOVE_OUTLINED,
             "selected_icon": ft.icons.DRIVE_FILE_MOVE,
+            "label": "Move Barang",
+        },
+        {
+            "icon": ft.icons.DELETE_FOREVER_OUTLINED,
+            "selected_icon": ft.icons.DELETE_FOREVER,
             "label": "Move Barang",
         },
         {

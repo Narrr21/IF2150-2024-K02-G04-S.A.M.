@@ -6,6 +6,40 @@ from frontend.template import (
 )
 from backend.app import *
 
+def removeBarangOverlay(page: ft.Page):
+    listbar = get_all_barang()
+
+    def close_dlg(e):
+        dlg.open = False
+        page.update()
+
+    def remove_barangs(e, barang):
+        # Hakim Jomok
+        close_dlg(e)
+
+
+    dlg = TemplateDialogTextField(
+        title="Remove Barang",
+        fields=[
+            TemplateButton(
+                text=Barang.name,
+                style="primary",
+                on_click=lambda e, barang=Barang: remove_barangs(e, barang), 
+            ) for Barang in listbar
+        ],
+        actions=[
+            TemplateButton(
+                text="Close",
+                style="secondary",
+                on_click=close_dlg
+            ),
+        ]
+    )
+    dlg.content = ft.Column(dlg.fields, height=150)
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
 def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     def close_dlg(e):
         dlg.open = False
