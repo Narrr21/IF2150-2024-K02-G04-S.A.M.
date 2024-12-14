@@ -190,6 +190,7 @@ def deleteGudangOverlay(page: ft.Page, id: int, gudang_page):
     page.show_dialog(dlg)
 
 def editGudangOverlay(page: ft.Page, id: int, gudang_page):
+    old_gudang = get_gudang(id)
     def close_dlg(e):
         dlg.open = False
         page.update()
@@ -198,6 +199,14 @@ def editGudangOverlay(page: ft.Page, id: int, gudang_page):
         gudang_name_field = dlg.fields[0]
         gudang_name_field.error_text = None
         gudang_name_field.border_color = None
+        listgud = get_all_gudang()
+        for gud in listgud:
+            if gud._id != id:
+                if gud.gudang_name == gudang_name_field.value:
+                    gudang_name_field.error_text = "Name already exists"
+                    gudang_name_field.border_color = "red"
+                    gudang_name_field.update()
+                    return
 
         if len(gudang_name_field.value) > 30:
             gudang_name_field.error_text = "Maximum 30 Characters"
@@ -209,6 +218,7 @@ def editGudangOverlay(page: ft.Page, id: int, gudang_page):
             gudang_name_field.border_color = None
             gudang_name_field.update()
             return
+
 
 
     def validate_input_capacity(e):
@@ -266,11 +276,14 @@ def editGudangOverlay(page: ft.Page, id: int, gudang_page):
             updated_max_capacity_field.border_color = "red"
             updated_max_capacity_field.update()
             return
+        
+
         update_gudang(gudang)
-        timestamp = datetime.datetime.now()
-        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        r = Riwayat([gudang._id], "UG", timestamp_str, True)
-        create_riwayat(r)
+        if old_gudang.gudang_name != updated_name or old_gudang.max_capacity != updated_max_capacity:
+            timestamp = datetime.datetime.now()
+            timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            r = Riwayat([gudang._id], "UG", timestamp_str, True)
+            create_riwayat(r)
         gudang_page.refreshScreen()
         page.close_dialog()
 

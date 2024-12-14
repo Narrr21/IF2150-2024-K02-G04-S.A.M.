@@ -47,6 +47,7 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
 
 def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     barang = get_barang(id)
+    old_barang = barang
     num = 0
     gudangrn = get_gudang(gudang_id)
     listrn = gudangrn.list_barang
@@ -54,6 +55,7 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     for i in listrn:
         if i[0] == id:
             num = i[1]
+    old_num = num
 
     def close_dlg(e):
         dlg.open = False
@@ -104,11 +106,12 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         for gudang in listgud:
             item_qty = 0
             for item in gudang.list_barang:
-                if get_barang(item[0]).name == updated_name:
-                    dlg.fields[0].error_text = "Name already exists!"
-                    dlg.fields[0].border_color = "red"
-                    is_valid = False
-                    break
+                if item[0] != id:
+                    if get_barang(item[0]).name == updated_name:
+                        dlg.fields[0].error_text = "Name already exists!"
+                        dlg.fields[0].border_color = "red"
+                        is_valid = False
+                        break
                 if get_barang(item[0])._id == id:
                     item_qty = item[1]
             if gudang.capacity + item_qty*updated_size > gudang.max_capacity:
@@ -141,10 +144,11 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
             barang.capacity = int(updated_size)
         num = 0
         update_barang(barang)
-        timestamp = datetime.datetime.now()
-        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        r = Riwayat([barang._id], "UB", timestamp_str, True)
-        create_riwayat(r)
+        if old_barang.name != barang.name or old_barang.capacity != barang.capacity or old_num != updated_qty:
+            timestamp = datetime.datetime.now()
+            timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            r = Riwayat([barang._id], "UB", timestamp_str, True)
+            create_riwayat(r)
         barang_page.refresh_data()
         dlg.open = False
         page.update()
