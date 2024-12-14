@@ -58,6 +58,7 @@ Setiap aktivitas yang dilakukan akan tercatat di menu Riwayat yang terdapat di a
   }
 }
 ```
+7. Gunakan dark mode pada pengaturan perangkat
 
 ## Daftar Modul Implementasi
 
