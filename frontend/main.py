@@ -29,7 +29,6 @@ def main(page: ft.Page):
         # TODO: Implement actual login logic
         print(f"Login attempt - Username: {username}, Password: {password}")
         # For now, just switch to main content
-        isLoggedIn = True
         if (isLoggedIn):
             page.clean()
             show_main_content()
