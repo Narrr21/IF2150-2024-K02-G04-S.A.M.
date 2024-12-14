@@ -79,9 +79,6 @@ def main(page: ft.Page):
                 content_area.content = gudang_page
             elif selected_index == 2:
                 content_area.content = riwayat_page
-            elif selected_index == 3:
-                createGudangOverlay(page)  # Call createGudangOverlay directly
-                page.update()
                 
             page.update()
             
@@ -101,11 +98,6 @@ def main(page: ft.Page):
             "icon": ft.icons.HISTORY_OUTLINED,
             "selected_icon": ft.icons.HISTORY,
             "label": "History",
-        },
-        {
-            "icon": ft.icons.ADD_OUTLINED,
-            "selected_icon": ft.icons.ADD,
-            "label": "Create Gudang",
         },
     ]
         

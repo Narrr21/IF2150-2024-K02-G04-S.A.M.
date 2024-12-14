@@ -369,6 +369,12 @@ class barangPage(ft.UserControl):
                             expand=True
                         ),
                         ft.Text(self.tempgudang.gudang_name, size=20, weight="bold"),
+                        ft.Row(
+                            [
+                                TemplateButton("Create Barang", on_click=lambda e: createBarangOverlay(self.page, self.id)),
+                                TemplateButton("Add Barang", on_click=lambda e: addBarangOverlay(self.page, self.id)),
+                            ],
+                        ),
                     ],
                     spacing=10,
                 ),

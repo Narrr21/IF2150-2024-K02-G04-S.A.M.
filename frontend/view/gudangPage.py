@@ -318,6 +318,28 @@ class gudangPage(ft.UserControl):
         )
         for Gudang in ListGudang
         ]
+        gudang_cards.append(
+            TemplateCard(
+                title="Create Gudang",
+                content=ft.Column([
+                    ft.Divider(),
+                    ft.Container(
+                        content=ft.Icon(ft.icons.ADD, size=50, color=TURQUOISE),
+                        alignment=ft.alignment.center,
+                        expand=True
+                    ),
+                    ft.Divider(height=8, color="transparent"),
+                    ft.Row([
+                        TemplateButton(
+                            text="Create Gudang",
+                            style="outline",
+                            width=200,
+                            on_click=lambda e: createGudangOverlay(page)
+                        )
+                    ], alignment=ft.MainAxisAlignment.CENTER)
+                ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+            )
+        )
 
         grid_view = ft.GridView(
             expand=True,
