@@ -1,6 +1,23 @@
 import flet as ft
-from const import *
+from frontend.const import *
+from typing import List
 
+class TemplateIconButton(ft.IconButton):
+    def __init__(
+        self,
+        icon: str,
+        on_click=None,
+        icon_color=None,
+        **kwargs
+    ):
+        super().__init__(
+            icon=icon,
+            icon_color=icon_color or TURQUOISE, 
+            bgcolor="transparent",
+            on_click=on_click,
+            **kwargs
+        )
+        
 class TemplateButton(ft.ElevatedButton):
     def __init__(
         self,
@@ -32,7 +49,7 @@ class TemplateButton(ft.ElevatedButton):
                 "style": ft.ButtonStyle(
                     color=TURQUOISE,
                     bgcolor={"hovered": TURQUOISE, "": "transparent"},
-                    overlay_color={"hovered": ft.colors.with_opacity(0.1, TURQUOISE)},
+                    overlay_color={"hovered": ft.colors.with_opacity(0.3, TURQUOISE)},
                     side=ft.BorderSide(2, TURQUOISE),
                 ),
             }
@@ -84,6 +101,30 @@ class TemplateDialog(ft.AlertDialog):
             **kwargs
         )
 
+class TemplateDialogTextField(ft.AlertDialog):
+    def __init__(
+        self,
+        title: str,
+        fields: List[TemplateTextField],
+        actions=None,
+        **kwargs
+    ):
+        if actions is None:
+            actions = [
+                TemplateButton("OK", style="primary"),
+                TemplateButton("Cancel", style="outline")
+            ]
+        
+        self.fields = [field for field in fields if field is not None]
+            
+        super().__init__(
+            title=ft.Text(title, size=16, weight="bold"),
+            content=ft.Column(fields, height=100),
+            actions=actions,
+            actions_alignment=ft.MainAxisAlignment.END,
+            **kwargs
+        )
+
 class TemplateCard(ft.Card):
     def __init__(
         self,
@@ -94,12 +135,12 @@ class TemplateCard(ft.Card):
         super().__init__(
             content=ft.Container(
                 content=ft.Column([
-                    ft.Text(title, size=16, weight="bold") if title else None,
+                    ft.Text(title, size=28, weight="bold", text_align=ft.TextAlign.CENTER, width=float('inf')) if title else None,
                     content if content else None,
                 ], tight=True),
                 padding=20,
             ),
-            elevation=1,
+            elevation=3,
             **kwargs
         )
 
@@ -153,8 +194,8 @@ class TemplateNavigationRail(ft.NavigationRail):
     def __init__(
         self,
         destinations: list,
-        selected_index=0,
         on_change=None,
+        selected_index=0,
         **kwargs
     ):
         destinations_ = [
@@ -164,6 +205,7 @@ class TemplateNavigationRail(ft.NavigationRail):
                 label_content=ft.Text(destination["label"], size=14, weight="bold", color=DARK_TEXT),
             ) for destination in destinations
         ]
+
         super().__init__(
             destinations=destinations_,
             selected_index=selected_index,
