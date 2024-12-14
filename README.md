@@ -54,12 +54,12 @@ Setiap aktivitas yang dilakukan akan tercatat di menu Riwayat yang terdapat di a
 ## Daftar Modul Implementasi
 | No    | Nama Modul  | Assigned to |Tampilan Layar|
 |:--|-----------|-----------------------|---|
-| 1 | Login     | Adi Haditya Nursyam                |(./img/login.jpeg)   |
-| 2 | Gudang    | Samuel Gerrard H. Girsang             |(./img/gudang.jpeg)   |
-| 3 | Barang    | Julius Arthur                |(./img/barang.jpeg)   |
-| 4 | Riwayat   | Nadhif Al Rozin                |(./img/riwayat.jpeg)   |
-| 5 | Database  | Lutfi Hakim Yusra                |(./img/database.jpeg)   |
-| 6 | Template  | Adi Haditya Nursyam   |(./img/gudang.jpeg)   |
+| 1 | Login     | Adi Haditya Nursyam                |![login](./img/login.jpeg)   |
+| 2 | Gudang    | Samuel Gerrard H. Girsang             |![gudang](./img/gudang.jpeg)   |
+| 3 | Barang    | Julius Arthur                |![barang](./img/barang.jpeg)   |
+| 4 | Riwayat   | Nadhif Al Rozin                |![riwayat](./img/riwayat.jpeg)   |
+| 5 | Database  | Lutfi Hakim Yusra                |![database](./img/database.jpeg)   |
+| 6 | Template  | Adi Haditya Nursyam   |![flet](./img/gudang.jpeg)   |
 
 
 
