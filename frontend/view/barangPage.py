@@ -105,6 +105,7 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         listgud = get_all_gudang()
         for gudang in listgud:
             item_qty = 0
+            found = False
             for item in gudang.list_barang:
                 if item[0] != id:
                     if get_barang(item[0]).name == updated_name:
@@ -114,8 +115,9 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
                         break
                 if get_barang(item[0])._id == id:
                     item_qty = item[1]
-            if gudang.capacity + item_qty*updated_size > gudang.max_capacity:
-                dlg.fields[2].error_text = "Size too large! Gudang capacity exceeded!"
+                    found = True
+            if gudang.capacity + (updated_qty-item_qty)*updated_size > gudang.max_capacity and found:
+                dlg.fields[2].error_text = "Size too large!\nGudang or other Gudang capacity exceeded!"
                 dlg.fields[2].border_color = "red"
                 is_valid = False
             
@@ -265,6 +267,15 @@ def createBarangOverlay(page: ft.Page, id: int, barang_page):
         qty = dlg.fields[1].value
         size = dlg.fields[2].value
         if name and qty and size:
+            if not qty.isnumeric() or not size.isnumeric():
+                if not qty.isnumeric():
+                    dlg.fields[1].error_text = "Quantity must be an integer!"
+                    dlg.fields[1].border_color = "red"
+                if not size.isnumeric():
+                    dlg.fields[2].error_text = "Size must be an integer!"
+                    dlg.fields[2].border_color = "red"
+                page.update()
+                return
             qty = int(qty)
             size = int(size)
             barang = Barang(name, size, "SKIBIDI", [])
