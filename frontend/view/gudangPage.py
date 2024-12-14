@@ -166,7 +166,7 @@ def deleteGudangOverlay(page: ft.Page, id: int, gudang_page):
         delete_gudang(id)
         timestamp = datetime.datetime.now()
         timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        r = Riwayat(id, "DG", timestamp_str, True)
+        r = Riwayat([id], "DG", timestamp_str, True)
         create_riwayat(r)
         gudang_page.refreshScreen()
         page.close_dialog()
@@ -261,6 +261,11 @@ def editGudangOverlay(page: ft.Page, id: int, gudang_page):
             gudang.gudang_name = updated_name
         if updated_max_capacity > 0:    
             gudang.max_capacity = updated_max_capacity
+        if gudang.capacity > updated_max_capacity:
+            updated_max_capacity_field.error_text = "Max Capacity must be greater or equal than current capacity"
+            updated_max_capacity_field.border_color = "red"
+            updated_max_capacity_field.update()
+            return
         update_gudang(gudang)
         timestamp = datetime.datetime.now()
         timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")

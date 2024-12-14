@@ -15,6 +15,12 @@ class riwayatPage(ft.UserControl):
         super().__init__()
         self.page = page
         self.dataRiwayat = RiwayatManager.get_all_riwayat()
+        self.dataRiwayat = sorted(self.dataRiwayat, key=lambda x: x.timestamp, reverse=True)
+
+    def refreshScreen(self):
+        self.content_area.clean()
+        self.content_area.content = self.build()
+        self.content_area.update()
 
     def build(self):
         return ft.Column([

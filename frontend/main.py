@@ -53,7 +53,7 @@ def main(page: ft.Page):
 
     # Pages
     login_page = LoginPage(page, handle_login)
-    riwayat_page = riwayatPage(page)
+    # riwayat_page = riwayatPage(page)
     
     def on_page_resize(e):
         login_page.height = page.window.height
@@ -81,7 +81,7 @@ def main(page: ft.Page):
             elif selected_index == 2:
                 removeBarangOverlay(page, gudang_page)
             elif selected_index == 3:
-                content_area.content = riwayat_page
+                content_area.content = riwayatPage(page)
                 
             page.update()
             
