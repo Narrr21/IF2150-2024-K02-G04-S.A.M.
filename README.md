@@ -1,23 +1,39 @@
-# IF2150-2024-K02-G04-S.A.M
+# STORAGE ALLOCATION MANAGER (S.A.M)
 
-python -m venv venv
 
-windows : venv\Scripts\activate
-macOS / linux : source venv/bin/activate
+S.A.M, atau Storage Allocation Management, adalah aplikasi yang dirancang untuk mencatat dan mengelola aktivitas penyimpanan di gudang. Aplikasi ini memungkinkan pengguna untuk:
+- Mencatat data gudang, termasuk nama dan ukuran setiap gudang.
+- Mencatat barang yang disimpan di gudang, meliputi nama barang, jumlah, dan ukurannya.
+- Mencatat perpindahan barang antar gudang, sehingga pengguna dapat melacak pergerakan barang dengan mudah.
 
-pip install -r requirements.txt
-pip install -e .
+Setiap aktivitas yang dilakukan akan tercatat di menu Riwayat yang terdapat di aplikasi.
 
-to exit venv : deactivate
+## Anggota Kelompok
+| No    | NIM  | Nama 
+|:--|-----------|-----------------------
+| 1 | 13122080     | Adi Haditya Nursyam                |   |
+| 2 | 13523064    | Samuel Gerrard H. Girsang             |   |
+| 3 | 13523030    | Julius Arthur                |   |
+| 4 | 13523076   | Nadhif Al Rozin                |   |
+| 5 | 13523084  | Lutfi Hakim Yusra                |   |
 
-if adding depedencies:
+## Cara Menjalankan Aplikasi
+1. Setup virtual environment dengan menjalankan command berikut di terminal:
+`python -m venv venv`
 
-- set PYTHONIOENCODING=ascii
-- pip freeze > requirements.txt
+2. Aktifkan virtual environment dengan menjalankan command berikut di terminal:
+	- MacOS / Linux :
+	`source venv/bin/activate`
+	- Windows :
+	`venv\Scripts\activate`
 
-if adding new admin:
+3. Install semua library yang diperlukan dengan menjalankan command berikut di terminal:
+`pip install -r requirements.txt`
 
-- add to admins.json
+4. Run program dengan menjalankan command berikut di terminal:
+`python frontend/main.py`
+
+5. Jika ingin menambahkan admin, masukkan ke `admins.json`
 
 ```json
   {
@@ -35,6 +51,46 @@ if adding new admin:
   }
 }
 ```
+## Daftar Modul Implementasi
+| No    | Nama Modul  | Assigned to |Tampilan Layar|
+|:--|-----------|-----------------------|---|
+| 1 | Login     | Adi Haditya Nursyam                |(./img/login.jpeg)   |
+| 2 | Gudang    | Samuel Gerrard H. Girsang             |(./img/gudang.jpeg)   |
+| 3 | Barang    | Julius Arthur                |(./img/barang.jpeg)   |
+| 4 | Riwayat   | Nadhif Al Rozin                |(./img/riwayat.jpeg)   |
+| 5 | Database  | Lutfi Hakim Yusra                |(./img/database.jpeg)   |
+| 6 | Template  | Adi Haditya Nursyam   |(./img/gudang.jpeg)   |
 
-> password_hash is the hash of the password
-> role is the role of the admin
+
+
+## Tabel Basis Data
+#### Tabel Admin
+| Nama Kolom    | Tipe  | Lebar |Untuk Menampung Data|
+|:--|-----------|-----------------------|---|
+| username | string     | 20                |username unik admin   |
+| password |  string | 20             |password dari username   |
+
+#### Tabel Gudang
+| Nama Kolom    | Tipe  | Lebar |Untuk Menampung Data|
+|:--|-----------|-----------------------|---|
+| id | integer     | 1               |id unik untuk tiap gudang   |
+| nama gudang |  string | 30           |nama unik untuk tiap gudang   |
+| capacity|  integer | 1   |nilai isi  gudang   |
+| max capacity |  integer | 30           |kapasitas maksimum gudang   |
+| list barang |  array of tuple int | 1 |Array of tuple integer yang menyimpan id barang dan quantity barang   |
+#### Tabel Barang
+| Nama Kolom    | Tipe  | Lebar |Untuk Menampung Data|
+|:--|-----------|-----------------------|---|
+| id | integer     | 1               |id unik untuk tiap gudang   |
+| name |  string | 30           |nama unik untuk tiap gudang   |
+| capacity|  integer | 1   |nilai isi  gudang   |
+| gudang | array of integer |         |kapasitas maksimum gudang   |
+#### Tabel Riwayat
+| Nama Kolom    | Tipe  | Lebar |Untuk Menampung Data|
+|:--|-----------|-----------------------|---|
+| id | integer     | 1               |kode unik untuk tiap riwayat   |
+| value |  array of integer | 4          |data yang digunakan sesuai kode aksi   |
+| action code|  character | 2  |kode untuk suatu aksi oleh admin   |
+| timestamp  |  string | 1          |waktu aksi dilakukan   |
+
+
