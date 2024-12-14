@@ -1,6 +1,6 @@
-# STORAGE ALLOCATION MANAGER (S.A.M)
+# STORAGE ALLOCATION MANAGER (S.A.M.)
 
-S.A.M, atau Storage Allocation Management, adalah aplikasi yang dirancang untuk mencatat dan mengelola aktivitas penyimpanan di gudang. Aplikasi ini memungkinkan pengguna untuk:
+S.A.M., atau Storage Allocation Management, adalah aplikasi yang dirancang untuk mencatat dan mengelola aktivitas penyimpanan di gudang. Aplikasi ini memungkinkan pengguna untuk:
 
 - Mencatat data gudang, termasuk nama dan ukuran setiap gudang.
 - Mencatat barang yang disimpan di gudang, meliputi nama barang, jumlah, dan ukurannya.
@@ -107,3 +107,7 @@ Setiap aktivitas yang dilakukan akan tercatat di menu Riwayat yang terdapat di a
 | value       | array of integer | 4     | data yang digunakan sesuai kode aksi |
 | action code | character        | 2     | kode untuk suatu aksi oleh admin     |
 | timestamp   | string           | 1     | waktu aksi dilakukan                 |
+
+#### Asistensi
+
+https://drive.google.com/file/d/1xysfeiDCloLcHE4N0TFcSUZcOGWG7gjt/view?usp=sharing
