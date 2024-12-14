@@ -48,11 +48,12 @@ def deleteBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
 def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     barang = get_barang(id)
     num = 0
-    listbar = get_barang_by_gudang(get_gudang(gudang_id))
-    for i in range(len(listbar)):
-        if listbar[i]._id == barang._id:
-            num = listbar[i]._id
-            break
+    gudangrn = get_gudang(gudang_id)
+    listrn = gudangrn.list_barang
+    listbar = get_barang_by_gudang(gudangrn)
+    for i in listrn:
+        if i[0] == id:
+            num = i[1]
 
     def close_dlg(e):
         dlg.open = False
