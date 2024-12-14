@@ -1,0 +1,115 @@
+[{
+  "_id": 1,
+  "value": [
+    1
+  ],
+  "actionCode": "CG",
+  "timestamp": "2024-12-14 18:06:43",
+  "success": true
+},
+{
+  "_id": 2,
+  "value": [
+    2
+  ],
+  "actionCode": "CG",
+  "timestamp": "2024-12-14 18:06:51",
+  "success": true
+},
+{
+  "_id": 3,
+  "value": [
+    3
+  ],
+  "actionCode": "CG",
+  "timestamp": "2024-12-14 18:06:57",
+  "success": true
+},
+{
+  "_id": 4,
+  "value": [
+    1,
+    1
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:07:07",
+  "success": true
+},
+{
+  "_id": 5,
+  "value": [
+    2,
+    1
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:07:25",
+  "success": true
+},
+{
+  "_id": 6,
+  "value": [
+    3,
+    1
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:07:37",
+  "success": true
+},
+{
+  "_id": 7,
+  "value": [
+    4,
+    1
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:08:05",
+  "success": true
+},
+{
+  "_id": 8,
+  "value": [
+    3,
+    2
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:08:10",
+  "success": true
+},
+{
+  "_id": 9,
+  "value": [
+    3
+  ],
+  "actionCode": "UB",
+  "timestamp": "2024-12-14 18:08:14",
+  "success": true
+},
+{
+  "_id": 10,
+  "value": [
+    5,
+    2
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:08:32",
+  "success": true
+},
+{
+  "_id": 11,
+  "value": [
+    4
+  ],
+  "actionCode": "CG",
+  "timestamp": "2024-12-14 18:08:46",
+  "success": true
+},
+{
+  "_id": 12,
+  "value": [
+    6,
+    3
+  ],
+  "actionCode": "CB",
+  "timestamp": "2024-12-14 18:10:35",
+  "success": true
+}]

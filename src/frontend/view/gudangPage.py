@@ -514,24 +514,22 @@ class gudangPage(ft.UserControl):
         ]
         gudang_cards.append(
             TemplateCard(
-                title="Create Gudang",
-                content=ft.Column([
-                    ft.Divider(),
-                    ft.Container(
-                        content=ft.Icon(ft.icons.ADD, size=50, color=TURQUOISE),
-                        alignment=ft.alignment.center,
-                        expand=True
-                    ),
-                    ft.Divider(height=8, color="transparent"),
-                    ft.Row([
-                        TemplateButton(
-                            text="Create Gudang",
-                            style="outline",
-                            width=200,
-                            on_click=lambda e: createGudangOverlay(page, self)
-                        )
-                    ], alignment=ft.MainAxisAlignment.CENTER)
-                ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),
+            title="Create Gudang",
+            content=ft.Column([
+                ft.Divider(),
+                ft.Container(
+                content=TemplateIconButton(
+                    icon=ft.icons.ADD,
+                    icon_color=TURQUOISE,
+                    on_click=lambda e: createGudangOverlay(page, self),
+                    icon_size=50,
+                    alignment=ft.alignment.center
+                ),
+                alignment=ft.alignment.center
+                ),
+                ft.Divider(height=8, color="transparent"),
+                ], 
+                spacing=5, alignment=ft.MainAxisAlignment.CENTER),
             )
         )
 
