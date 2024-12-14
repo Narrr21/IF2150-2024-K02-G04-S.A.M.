@@ -49,3 +49,5 @@ class RiwayatManager:
             return f"Gudang with ID {riwayat.value[0]} deleted"
         elif riwayat.actionCode == "UG":
             return f"Gudang with ID {riwayat.value[0]} updated"
+        elif riwayat.actionCode == "RB":
+            return f"Barang with ID {riwayat.value[0]} removed from Database"

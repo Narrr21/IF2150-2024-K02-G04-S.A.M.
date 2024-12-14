@@ -360,7 +360,7 @@ def create_riwayat(Riwayat) -> None:
         "_id": Riwayat._id,
         "value": Riwayat.value,
         "actionCode": Riwayat.actionCode,
-        "timestamp": Riwayat.time,
+        "timestamp": Riwayat.timestamp,
         "success": Riwayat.success
     }
     result = riwayat_collection.insert_one(document)
