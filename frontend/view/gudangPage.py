@@ -4,16 +4,17 @@ from frontend.template import (
     TemplateCard, TemplateIconButton
 )
 from frontend.const import DARK_TEXT, TURQUOISE
-from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang
+from backend.app import get_all_gudang, get_gudang, update_gudang, delete_gudang, create_gudang, Gudang
 from frontend.view.barangPage import barangPage
 
-def deleteGudangOverlay(page: ft.Page, id: int):
+def deleteGudangOverlay(page: ft.Page, id: int, gudang_page):
     def close_dlg(e):
         dlg.open = False
         page.update()
 
     def confirm_delete(e):
         delete_gudang(id)
+        gudang_page.refreshScreen()
         page.close_dialog()
 
     dlg = TemplateDialog(
@@ -35,7 +36,7 @@ def deleteGudangOverlay(page: ft.Page, id: int):
 
     page.show_dialog(dlg)
 
-def editGudangOverlay(page: ft.Page, id: int):
+def editGudangOverlay(page: ft.Page, id: int, gudang_page):
     def close_dlg(e):
         dlg.open = False
         page.update()
@@ -86,15 +87,15 @@ def editGudangOverlay(page: ft.Page, id: int):
         try:
             updated_max_capacity = int(updated_max_capacity_field.value)
         except ValueError:
-            max_capacity_field.error_text = "Input must be a number"
-            max_capacity_field.border_color = "red"
-            max_capacity_field.update()
+            updated_max_capacity_field.error_text = "Input must be a number"
+            updated_max_capacity_field.border_color = "red"
+            updated_max_capacity_field.update()
             return
         
-        if max_capacity <= 0:
-            max_capacity_field.error_text = "Input must be greater than 0"
-            max_capacity_field.border_color = "red"
-            max_capacity_field.update()
+        if updated_max_capacity <= 0:
+            updated_max_capacity_field.error_text = "Input must be greater than 0"
+            updated_max_capacity_field.border_color = "red"
+            updated_max_capacity_field.update()
             return
         
         if updated_name:
@@ -102,6 +103,7 @@ def editGudangOverlay(page: ft.Page, id: int):
         if updated_max_capacity:    
             gudang.max_capacity = updated_max_capacity
         update_gudang(gudang)
+        gudang_page.refreshScreen()
         page.close_dialog()
 
     gudang = get_gudang(id)
@@ -138,7 +140,7 @@ def editGudangOverlay(page: ft.Page, id: int):
 
     page.show_dialog(dlg)
 
-def createGudangOverlay(page: ft.Page):
+def createGudangOverlay(page: ft.Page, gudang_page):
     def close_dlg(e):
         page.close_dialog()
 
@@ -181,7 +183,7 @@ def createGudangOverlay(page: ft.Page):
                 max_capacity_field.border_color = "red"
         max_capacity_field.update()
 
-    def create_gudang(e):
+    def create_gudangs(e):
         gudang_name = dlg.fields[0].value
         max_capacity_field = dlg.fields[1]
         if gudang_name == "":
@@ -210,7 +212,9 @@ def createGudangOverlay(page: ft.Page):
             max_capacity_field.update()
             return
         
-        create_gudang(gudang_name, 0, max_capacity, [])
+        gudang = Gudang(gudang_name, 0, max_capacity, [])
+        create_gudang(gudang)
+        gudang_page.refreshScreen()
         page.close_dialog()
         
 
@@ -236,7 +240,7 @@ def createGudangOverlay(page: ft.Page):
             TemplateButton(
                 text="Create Gudang",
                 style="primary",
-                on_click=create_gudang
+                on_click=create_gudangs
             ),
             TemplateButton(
                 text="Cancel",
@@ -259,6 +263,11 @@ class gudangPage(ft.UserControl):
         barang_page = barangPage(self.page, gudang_id).build()
         self.content_area.clean()
         self.content_area.content = barang_page
+        self.content_area.update()
+
+    def refreshScreen(self):
+        self.content_area.clean()
+        self.content_area.content = self.build()
         self.content_area.update()
 
     def build(self):
@@ -293,14 +302,14 @@ class gudangPage(ft.UserControl):
                         icon=ft.icons.EDIT_OUTLINED,
                         icon_color=TURQUOISE,
                         on_click=lambda e, gudang_id=Gudang._id: (
-                            editGudangOverlay(page, gudang_id)
+                            editGudangOverlay(page, gudang_id, self)
                         )
                     ),
                     TemplateIconButton(
                         icon=ft.icons.DELETE_OUTLINE,
                         icon_color=ft.colors.RED,
                         on_click=lambda e, gudang_id=Gudang._id: (
-                            deleteGudangOverlay(page, gudang_id)
+                            deleteGudangOverlay(page, gudang_id, self)
                         )
                     )
                 ], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
@@ -334,7 +343,7 @@ class gudangPage(ft.UserControl):
                             text="Create Gudang",
                             style="outline",
                             width=200,
-                            on_click=lambda e: createGudangOverlay(page)
+                            on_click=lambda e: createGudangOverlay(page, self)
                         )
                     ], alignment=ft.MainAxisAlignment.CENTER)
                 ], spacing=5, alignment=ft.MainAxisAlignment.CENTER),

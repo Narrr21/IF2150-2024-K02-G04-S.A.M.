@@ -120,6 +120,7 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
         barang_page.refresh_data()
         dlg.open = False
         page.update()
+        
 
         
 
@@ -171,17 +172,25 @@ def updateBarangOverlay(page: ft.Page, id: int, gudang_id: int, barang_page):
     dlg.open = True
     page.update()
 
-def addBarangOverlay(page: ft.Page, gudang_id: int):
-    listbar = get_barang_by_gudang(get_gudang(gudang_id))
+def addBarangOverlay(page: ft.Page, gudang_id: int, barang_page):
+    listbar = get_all_barang()
+    current_listbar = get_barang_by_gudang(get_gudang(gudang_id))
+    for barang in current_listbar:
+        for i in range(len(listbar)):
+            if listbar[i]._id == barang._id:
+                listbar.pop(i)
+                break
+    gudang = get_gudang(gudang_id)
 
     def close_dlg(e):
         dlg.open = False
+        barang_page.refresh_data()
         page.update()
 
-    def add_barang(e, barang):
-        # adding 1 barang
-        update_barang_qty(barang_id=barang._id, gudang_id=gudang_id, qty=1)
-        print(f"Added barang: {barang.name} to gudang {gudang_id}")
+    def add_barangs(e, barang):
+        add_barang(barang, gudang, 1)
+        close_dlg(e)
+
 
     dlg = TemplateDialogTextField(
         title="Add Barang",
@@ -189,7 +198,7 @@ def addBarangOverlay(page: ft.Page, gudang_id: int):
             TemplateButton(
                 text=Barang.name,
                 style="primary",
-                on_click=lambda e, barang=Barang: add_barang(e, barang)
+                on_click=lambda e, barang=Barang: add_barangs(e, barang), 
             ) for Barang in listbar
         ],
         actions=[
@@ -204,7 +213,7 @@ def addBarangOverlay(page: ft.Page, gudang_id: int):
     dlg.open = True
     page.update()
 
-def createBarangOverlay(page: ft.Page, id: int):
+def createBarangOverlay(page: ft.Page, id: int, barang_page):
     def close_dlg(e):
         dlg.open = False
         page.update()
@@ -217,12 +226,12 @@ def createBarangOverlay(page: ft.Page, id: int):
         if name and qty and size:
             qty = int(qty)
             size = int(size)
-            barang = Barang(name, size, "SKIBIDI")
+            barang = Barang(name, size, "SKIBIDI", [])
             gudang = get_gudang(id)
             create_barang(barang, gudang, qty)
         dlg.open = False
-        page.clean()
-        barangPage(page, id)
+
+        barang_page.refresh_data()
         page.update()
         
     dlg = TemplateDialogTextField(
@@ -259,6 +268,7 @@ def createBarangOverlay(page: ft.Page, id: int):
         ]
     )
 
+    dlg.content = ft.Column(dlg.fields, height=180)
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
@@ -371,8 +381,8 @@ class barangPage(ft.UserControl):
                         ft.Text(self.tempgudang.gudang_name, size=20, weight="bold"),
                         ft.Row(
                             [
-                                TemplateButton("Create Barang", on_click=lambda e: createBarangOverlay(self.page, self.id)),
-                                TemplateButton("Add Barang", on_click=lambda e: addBarangOverlay(self.page, self.id)),
+                                TemplateButton("Create Barang", on_click=lambda e: createBarangOverlay(self.page, self.id, self)),
+                                TemplateButton("Add Barang", on_click=lambda e: addBarangOverlay(self.page, self.id, self)),
                             ],
                         ),
                     ],
