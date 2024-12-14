@@ -78,11 +78,13 @@ def add_barang(barang: Barang, gudang: Gudang, jumlah: int) -> None:
         return
     barang.gudang.append(gudang._id)
     gudang.list_barang.append((barang._id, jumlah))
+
     barang_collection.update_one({"_id": barang._id}, {"$set": {
         "gudang": barang.gudang
     }})
     gudang_collection.update_one({"_id": gudang._id}, {"$set": {
-        "list_barang": gudang.list_barang
+        "list_barang": gudang.list_barang,
+        "capacity" : calculate_current_capacity(gudang)
     }})
     print(f"Barang with ID {barang._id} added to Gudang with ID {gudang._id}")
 
