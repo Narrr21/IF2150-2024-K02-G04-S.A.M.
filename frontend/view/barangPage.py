@@ -252,6 +252,7 @@ def addBarangOverlay(page: ft.Page, gudang_id: int, barang_page):
             ),
         ]
     )
+    dlg.content = ft.Column(dlg.fields, height=180 + 15*len(listbar))
     page.overlay.append(dlg)
     dlg.open = True
     page.update()

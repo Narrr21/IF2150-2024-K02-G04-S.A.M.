@@ -44,7 +44,7 @@ def removeBarangOverlay(page: ft.Page, gudang_page):
             ),
         ]
     )
-    dlg.content = ft.Column(dlg.fields, height=150)
+    dlg.content = ft.Column(dlg.fields, height=180 + 15*len(listbar))
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
